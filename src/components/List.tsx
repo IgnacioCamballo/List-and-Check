@@ -10,6 +10,7 @@ type ListProps = {
 
 export default function List({list}: ListProps) {
   const {isDarkMode} = useTask()
+  const textColor = isDarkMode ? theme.colors.textColor.dark : theme.colors.textColor.light
 
   const listContWidth = (Dimensions.get("screen").width - 58) / 2
 
@@ -17,13 +18,12 @@ export default function List({list}: ListProps) {
     <View 
       style={[
         styles.listContainer, {
-        backgroundColor: isDarkMode ? theme.colors.listColor.dark : theme.colors.listColor.light,
-        borderColor: list.borderColor,
+        backgroundColor: isDarkMode ? theme.colors.secondBaseColor.dark : theme.colors.secondBaseColor.light,
         minWidth: listContWidth,
         maxWidth: listContWidth
       }]}
     >
-      <Text style={styles.title}>{list.title}</Text>
+      <Text style={[styles.title, {color: textColor}]}>{list.title}</Text>
     </View>
   )
 }
@@ -31,8 +31,7 @@ export default function List({list}: ListProps) {
 const styles = StyleSheet.create({
   listContainer: {
     flex: 1,
-    borderWidth: 2,
-    borderRadius: 16,
+    borderRadius: 24,
     height: 160,
     overflow: "hidden",
     shadowOffset: { width: 4, height: 4 },

@@ -2,5 +2,29 @@
   "task": [
     {"lenguage": "es", "text": "Tarea"},
     {"lenguage": "en", "text": "Task"}
+  ],
+  "createList": [
+    {"lenguage": "es", "text": "Crear Lista"},
+    {"lenguage": "en", "text": "Create List"}
+  ],
+  "selectColor": [
+    {"lenguage": "es", "text": "Seleccionar Color"},
+    {"lenguage": "en", "text": "Select Color"}
+  ],
+  "title": [
+    {"lenguage": "es", "text": "Título"},
+    {"lenguage": "en", "text": "Title"}
+  ],
+  "config": [
+    {"lenguage": "es", "text": "Configuración"},
+    {"lenguage": "en", "text": "Configuration"}
+  ],
+  "lenguage": [
+    {"lenguage": "es", "text": "Idioma"},
+    {"lenguage": "en", "text": "Language"}
+  ],
+  "theme": [
+    {"lenguage": "es", "text": "Aspecto"},
+    {"lenguage": "en", "text": "Appearance"}
   ]
 }

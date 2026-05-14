@@ -1,35 +1,36 @@
 import React, { useState } from 'react'
-import { Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native'
 
 import useTask from '../hooks/useTask';
 import theme from '../theme/theme';
 
 import List from '../components/List';
-import NewListModal from '../components/NewListModal';
-import ConfigModal from '../components/ConfigModal';
+import NewListModal from '../components/modals/NewListModal';
+import ConfigModal from '../components/modals/ConfigModal';
+import ConfigGear from '../components/basic/svg/ConfigGear';
+import { Entypo } from '@expo/vector-icons';
 
 export default function Main() {
   const {lists} = useTask()
 
-  const [newListModal, setNewListModal] = useState(true)
+  const [newListModal, setNewListModal] = useState(false)
   const [configModal, setConfigModal] = useState(false)
 
   return (
     <View style={styles.container}>
       <View style= {styles.buttonContainer}>
         <TouchableOpacity 
-          style={styles.btnNewList}
-          activeOpacity={0.7}
-          onPress={() => setNewListModal(true)}
+          activeOpacity={0.9}
+          onPress={() => setConfigModal(true)}
           >
-          <Text style={styles.btnNewListText}>+</Text>
+          <ConfigGear width={40} height={40}/>
         </TouchableOpacity>
         <TouchableOpacity 
           style={styles.btnNewList}
-          activeOpacity={0.7}
-          onPress={() => setConfigModal(true)}
+          activeOpacity={0.9}
+          onPress={() => setNewListModal(true)}
           >
-          <Text style={styles.btnNewListText}>+</Text>
+          <Entypo style={{transform: [{translateX: 1}]}} name="add-to-list" size={24} color={theme.colors.white} />
         </TouchableOpacity>
       </View>
       <View style={styles.listsContainer}>
@@ -39,7 +40,7 @@ export default function Main() {
       </View>
 
       {newListModal && <NewListModal setModal={setNewListModal}/>}
-      {/* {configModal && <ConfigModal setModal={setConfigModal}/>} */}
+      {configModal && <ConfigModal setIsVisible={setConfigModal}/>}
     </View>
   )
 }
@@ -50,10 +51,10 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: "row",
-    justifyContent: "flex-end",
-    gap: 12,
+    justifyContent: "space-between",
     paddingTop: Platform.OS === "ios" ? 60 : 40,
-    paddingInline: 20
+    paddingInline: 20,
+    marginBottom: 12
 
   },
     btnNewList: {
@@ -63,7 +64,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: theme.colors.lightBlue,
     borderRadius: "50%",
-    alignSelf: "flex-end",
     marginRight: 0,
     marginBottom: 12
   },

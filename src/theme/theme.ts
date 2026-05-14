@@ -3,12 +3,24 @@ import { Platform } from "react-native"
 const theme = {
     colors: {
         baseColor: {
-          light: "#efefef",
-          dark: "#272727"
+          light: "#dedede",
+          dark: "#000000"
+        },
+        secondBaseColor: {
+          dark: "#1a1a1a",
+          light: "#e7e7e7"
+        },
+        sectionColor: {
+          light: "#f5f5f5",
+          dark: "#222222"
         },
         textColor: {
           light: "#000000",
-          dark: "#dedede"
+          dark: "#e2e2e2"
+        },
+        secondTextColor: {
+          light: "#4b4b4b",
+          dark: "#a5a5a5"
         },
         buttonColor: {
           light: "#e0e0e0",
@@ -18,9 +30,18 @@ const theme = {
           light: "#ededed",
           dark: "#373737"
         },
-        black: "#000000",
+        greenSuccess: {
+          light: "#9eeba1",
+          dark: "#78b87a"
+        },
         white: "#ffffff",
-        lightBlue: "#7b90bc"
+        lightGrey: "#d9d9d9",
+        grey: "#444444",
+        darkGrey: "#1a1a1a",
+        black: "#000000",
+        lightBlue: "#7b90bc",
+        red: "#d62323",
+        lightRed: "#ab4d4d",
     },
     fontSizes: {
         F24: 24,
