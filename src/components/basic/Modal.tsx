@@ -7,9 +7,10 @@ type ModalProps = {
   children: React.ReactNode,
   closeModal: () => void,
   innerStyles?: StyleProp<ViewStyle>
+  bgStyles?: StyleProp<ViewStyle>
 }
 
-export default function ModalBase({ children, closeModal, innerStyles }: ModalProps) {
+export default function ModalBase({ children, closeModal, innerStyles, bgStyles }: ModalProps) {
   const {isDarkMode} = useTask()
 
   return (
@@ -24,7 +25,8 @@ export default function ModalBase({ children, closeModal, innerStyles }: ModalPr
         onPress={closeModal}
         style={[
           styles.modalBg, 
-          {backgroundColor: isDarkMode ? "#ffffff20" : "#00000056"}
+          {backgroundColor: isDarkMode ? "#ffffff20" : "#00000056"},
+          bgStyles
         ]}
       />
         

@@ -13,7 +13,8 @@ export type Task = {
 export type ListType = {
   id: number,
   orderNumber: number,
-  borderColor: string,
+  color: string,
+  icon: string,
   title: string,
   tasks: Task[] | [],
   tasksDone: Task[] | []

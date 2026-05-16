@@ -26,5 +26,9 @@
   "theme": [
     {"lenguage": "es", "text": "Aspecto"},
     {"lenguage": "en", "text": "Appearance"}
+  ],
+  "icon": [
+    {"lenguage": "es", "text": "Icono"},
+    {"lenguage": "en", "text": "Icon"}
   ]
 }

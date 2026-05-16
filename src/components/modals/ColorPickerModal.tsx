@@ -4,6 +4,7 @@ import ColorPicker, { ColorFormatsObject, HueSlider, Panel1, Preview } from 'rea
 
 import theme from '../../theme/theme';
 import useTask from '../../hooks/useTask';
+import ModalBase from '../basic/Modal';
 
 export interface returnedResults {
   hex: string;
@@ -34,6 +35,7 @@ export default function ColorPickerModal({currentColor, setColor, setModal} : Co
   }
 
   return (
+    <ModalBase closeModal={() => setModal(false)} bgStyles={{bottom: 0}}>
       <View 
         style={[
           styles.modalContainer, 
@@ -68,21 +70,17 @@ export default function ColorPickerModal({currentColor, setColor, setModal} : Co
           </TouchableOpacity>
         </View>
       </View>
+    </ModalBase>
   )
 }
 
 const styles = StyleSheet.create({
   modalContainer: {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: [{ translateX: "-50%" }, { translateY: "-50%" }],
     justifyContent: 'center',
     alignItems: 'center',
     width: "100%",
-    height: 400,
     borderRadius: 20,
-    padding: 20
+    padding: 10
   },
   colorPicker: {
     width: '100%',

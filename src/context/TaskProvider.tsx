@@ -24,7 +24,8 @@ const TaskProvider = ({ children }: props) => {
   const testLists = [
     {
       id: 1,
-      borderColor: "#d62323",
+      color: "#d62323",
+      icon: "list",
       orderNumber: 1,
       title: "escuela",
       tasks: [{
@@ -36,7 +37,8 @@ const TaskProvider = ({ children }: props) => {
     },
     {
       id: 2,
-      borderColor: "#d6d623",
+      color: "#d6d623",
+      icon: "list",
       orderNumber: 2,
       title: "trabajo",
       tasks: [{
@@ -48,7 +50,8 @@ const TaskProvider = ({ children }: props) => {
     },
     {
       id: 3,
-      borderColor: "#d6d62",
+      color: "#d6d62",
+      icon: "list",
       orderNumber: 3,
       title: "trabajo",
       tasks: [{
