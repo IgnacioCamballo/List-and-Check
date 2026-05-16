@@ -1,53 +1,74 @@
-import React, { useEffect, useRef } from 'react'
-import { Animated, StyleSheet } from 'react-native'
-import { Route, Routes } from 'react-router-native'
+import React, { useState } from 'react'
+import { StatusBar, StyleSheet, Text, View } from 'react-native'
+import { NavigationContainer } from '@react-navigation/native'
+import { createNativeStackNavigator } from '@react-navigation/native-stack'
 
 import theme from '../theme/theme'
 import useTask from '../hooks/useTask'
 
-import Layout from '../Layouts/Layout'
 import LoadScreen from './LoadScreen'
 import Main from './Main'
 import TaskPage from './TaskPage'
+import type { RootStackParamList } from '../navigation/types'
 
-export default function Router() {
-  const {isDarkMode} = useTask()
+const Stack = createNativeStackNavigator<RootStackParamList>()
 
-  const bgColorStyleValue = useRef(new Animated.Value(isDarkMode ? 1 : 0)).current
+type RouteName = keyof RootStackParamList
 
-  const bgColorStyles = {
-    backgroundColor: bgColorStyleValue.interpolate({
-      inputRange: [0, 1],
-      outputRange: [theme.colors.baseColor.light, theme.colors.baseColor.dark]
-    })
-  }
+function RouterContent({ routeName }: { routeName: RouteName }) {
+  const { isDarkMode, configInfo } = useTask()
 
-  useEffect(() => {
-    Animated.timing(bgColorStyleValue, {
-      toValue: isDarkMode ? 1 : 0,
-      duration: 100,
-      useNativeDriver: false
-    }).start()
-  }, [isDarkMode])
-  
-
-  const bgcolor = isDarkMode ? theme.colors.baseColor.dark : theme.colors.baseColor.light
+  const statusBarColor = routeName === 'Load' ? '#ffffff' : configInfo.baseColor
+  const statusBarTextStyle = routeName === 'Load' ? 'dark-content' : isDarkMode ? 'light-content' : 'dark-content'
 
   return (
-    <Animated.View style={[styles.container, bgColorStyles]}>
-      <Routes>
-        <Route path='/' element={<LoadScreen/>} index/>
-        <Route element={<Layout/>}>
-          <Route path="/lists" element={<Main/>} />
-          <Route path="/task/:taskId" element={<TaskPage/>} />
-        </Route>
-      </Routes>
-    </Animated.View>
+    <View style={styles.root}>
+      <StatusBar backgroundColor={statusBarColor} barStyle={statusBarTextStyle} />
+      <View style={styles.container}>
+        <Stack.Navigator
+          initialRouteName="Load"
+          screenOptions={{ headerShown: false }}
+        >
+          <Stack.Screen name="Load" component={LoadScreen} />
+          <Stack.Screen name="Main" component={Main} />
+          <Stack.Screen name="TaskPage" component={TaskPage} />
+        </Stack.Navigator>
+      </View>
+      <Text style={styles.publicidad}>Publicidad</Text>
+    </View>
+  )
+}
+
+export default function Router() {
+  const [routeName, setRouteName] = useState<RouteName>('Load')
+
+  return (
+    <NavigationContainer
+      onStateChange={(state) => {
+        const currentRoute = state?.routes[state.index]?.name
+        if (currentRoute) {
+          setRouteName(currentRoute as RouteName)
+        }
+      }}
+    >
+      <RouterContent routeName={routeName} />
+    </NavigationContainer>
   )
 }
 
 const styles = StyleSheet.create({
+  root: {
+    flex: 1
+  },
   container: {
     flex: 1
+  },
+  publicidad: {
+    width: '100%',
+    height: theme.bannerHeight,
+    backgroundColor: '#6baa9d',
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    zIndex: 100
   },
 });

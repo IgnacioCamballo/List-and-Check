@@ -1,30 +1,33 @@
 import React from 'react'
-import { Dimensions, StyleSheet, Text, View } from 'react-native'
+import { Dimensions, StyleSheet, Text, TouchableOpacity } from 'react-native'
 import theme from '../theme/theme'
 import useTask from '../hooks/useTask'
 import { ListType } from '../types'
 
 type ListProps = {
   list: ListType
+  onPress: () => void
 }
 
-export default function List({list}: ListProps) {
+export default function List({list, onPress}: ListProps) {
   const {isDarkMode} = useTask()
   const textColor = isDarkMode ? theme.colors.textColor.dark : theme.colors.textColor.light
 
   const listContWidth = (Dimensions.get("screen").width - 58) / 2
 
   return (
-    <View 
+    <TouchableOpacity 
       style={[
         styles.listContainer, {
         backgroundColor: isDarkMode ? theme.colors.secondBaseColor.dark : theme.colors.secondBaseColor.light,
         minWidth: listContWidth,
         maxWidth: listContWidth
       }]}
+      activeOpacity={0.85}
+      onPress={onPress}
     >
       <Text style={[styles.title, {color: textColor}]}>{list.title}</Text>
-    </View>
+    </TouchableOpacity>
   )
 }
 

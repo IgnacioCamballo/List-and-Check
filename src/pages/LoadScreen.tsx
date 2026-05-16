@@ -1,11 +1,14 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import React, { useEffect } from 'react'
 import { Text, View } from 'react-native'
-import { useNavigate } from 'react-router-native'
+import { useNavigation } from '@react-navigation/native'
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
+
 import useTask from '../hooks/useTask'
+import type { RootStackParamList } from '../navigation/types'
 
 export default function LoadScreen() {
-  const navigate = useNavigate()
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
   const {setIsDarkMode, setLenguage, setLists} = useTask()
 
   const getStoragedInfo = async () => {
@@ -21,11 +24,13 @@ export default function LoadScreen() {
   useEffect(() => {
     getStoragedInfo()
 
-    setTimeout(() => {
-      navigate("/lists")
-    }, 1000);
+    const timeoutId = setTimeout(() => {
+      navigation.replace('Main')
+    }, 1000)
+
+    return () => clearTimeout(timeoutId)
     
-  }, [])
+  }, [navigation])
 
   return (
     <View style={{flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: "#7c4a4a"}}>

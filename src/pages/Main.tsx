@@ -1,5 +1,8 @@
-import React, { useState } from 'react'
-import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native'
+import React, { useEffect, useRef, useState } from 'react'
+import { Animated, Platform, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { useNavigation } from '@react-navigation/native'
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import type { RootStackParamList } from '../navigation/types';
 
 import useTask from '../hooks/useTask';
 import theme from '../theme/theme';
@@ -11,13 +14,31 @@ import ConfigGear from '../components/basic/svg/ConfigGear';
 import { Entypo } from '@expo/vector-icons';
 
 export default function Main() {
-  const {lists} = useTask()
+  const {lists, isDarkMode} = useTask()
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
 
   const [newListModal, setNewListModal] = useState(false)
   const [configModal, setConfigModal] = useState(false)
 
+  const bgColorStyleValue = useRef(new Animated.Value(isDarkMode ? 1 : 0)).current
+
+  const bgColorStyles = {
+    backgroundColor: bgColorStyleValue.interpolate({
+      inputRange: [0, 1],
+      outputRange: [theme.colors.baseColor.light, theme.colors.baseColor.dark]
+    })
+  }
+
+  useEffect(() => {
+    Animated.timing(bgColorStyleValue, {
+      toValue: isDarkMode ? 1 : 0,
+      duration: 100,
+      useNativeDriver: false
+    }).start()
+  }, [isDarkMode])
+
   return (
-    <View style={styles.container}>
+    <Animated.View style={[styles.container, bgColorStyles]}>
       <View style= {styles.buttonContainer}>
         <TouchableOpacity 
           activeOpacity={0.9}
@@ -35,13 +56,17 @@ export default function Main() {
       </View>
       <View style={styles.listsContainer}>
         {lists.map(listInfo => 
-          <List key={listInfo.id} list={listInfo}/>
+          <List
+            key={listInfo.id}
+            list={listInfo}
+            onPress={() => navigation.navigate('TaskPage', { listId: listInfo.id })}
+          />
         )}
       </View>
 
       {newListModal && <NewListModal setModal={setNewListModal}/>}
       {configModal && <ConfigModal setIsVisible={setConfigModal}/>}
-    </View>
+    </Animated.View>
   )
 }
 
