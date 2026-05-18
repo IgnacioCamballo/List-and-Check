@@ -16,7 +16,7 @@ const TaskProvider = ({ children }: props) => {
 
   const initialCofigInfo = {
     baseColor: colorScheme === "dark" ? theme.colors.baseColor.dark : theme.colors.baseColor.light,
-    buttonsColor: colorScheme === "dark" ? theme.colors.buttonColor.dark : theme.colors.buttonColor.light,
+    buttonsColor: colorScheme === "dark" ? theme.colors.listColor.dark : theme.colors.white,
     textColor: colorScheme === "dark" ? theme.colors.textColor.dark : theme.colors.textColor.light,
   }
   
@@ -25,20 +25,27 @@ const TaskProvider = ({ children }: props) => {
     {
       id: 1,
       color: "#d62323",
-      icon: "list",
+      icon: "unordered-list",
       orderNumber: 1,
       title: "escuela",
       tasks: [{
         id: 1111,
         orderNumber: 1,
         content: "hacer tarea"
+      },
+      {
+        id: 1112,
+        orderNumber: 2,
+        content: "hacer la otra"
       }],
-      tasksDone: []
+      tasksDone: [],
+      showTasksDone: true
+
     },
     {
       id: 2,
       color: "#d6d623",
-      icon: "list",
+      icon: "unordered-list",
       orderNumber: 2,
       title: "trabajo",
       tasks: [{
@@ -46,12 +53,14 @@ const TaskProvider = ({ children }: props) => {
         orderNumber: 1,
         content: "trabajar"
       }],
-      tasksDone: []
+      tasksDone: [],
+      showTasksDone: true
+
     },
     {
       id: 3,
       color: "#d6d62",
-      icon: "list",
+      icon: "unordered-list",
       orderNumber: 3,
       title: "trabajo",
       tasks: [{
@@ -59,7 +68,8 @@ const TaskProvider = ({ children }: props) => {
         orderNumber: 1,
         content: "trabajar"
       }],
-      tasksDone: []
+      tasksDone: [],
+      showTasksDone: true
     }
   ]
   

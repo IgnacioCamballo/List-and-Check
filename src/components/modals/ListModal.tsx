@@ -5,25 +5,20 @@ import { LinearGradient } from 'expo-linear-gradient'
 
 import useTask from '../../hooks/useTask'
 import theme from '../../theme/theme'
+import { Layout, ListType } from '../../types'
 
 import ColorPickerModal from './ColorPickerModal'
 import { translate } from '../../utils'
 import { AntDesign, Octicons } from '@expo/vector-icons'
 
-type NewListModalProps = {
+type ListModalProps = {
   setModal: React.Dispatch<React.SetStateAction<boolean>>,
+  list?: ListType
 }
 
 type AntDesignName = React.ComponentProps<typeof AntDesign>
 
-type IconLayout = {
-  x: number,
-  y: number,
-  width: number,
-  height: number,
-}
-
-export default function NewListModal({ setModal }: NewListModalProps) {
+export default function ListModal({ setModal, list }: ListModalProps) {
   const { isDarkMode, lenguage, lists, setLists } = useTask()
   const { width: windowWidth } = useWindowDimensions()
 
@@ -45,34 +40,19 @@ export default function NewListModal({ setModal }: NewListModalProps) {
   }
 
   const [pickerModal, setPickerModal] = useState(false)
-  const [title, setTitle] = useState("")
-  const [color, setColor] = useState(getRandomColor())
-  const [icon, setIcon] = useState<AntDesignName['name']>("unordered-list")
+  const [title, setTitle] = useState(list ? list.title : "")
+  const [color, setColor] = useState(list ? list.color : getRandomColor())
+  const [icon, setIcon] = useState<AntDesignName['name']>(list ? (list.icon as AntDesignName['name']) : "unordered-list")
   const iconScale = useRef(new Animated.Value(1)).current
   const indicatorX = useRef(new Animated.Value(0)).current
   const indicatorY = useRef(new Animated.Value(0)).current
   //al renderizar el componente iconLayouts guarda las posiciones y tamaño de cada icono, para luego animar el indicador a la posición del icono seleccionado
-  const [iconLayouts, setIconLayouts] = useState<Partial<Record<AntDesignName['name'], IconLayout>>>({})
+  const [iconLayouts, setIconLayouts] = useState<Partial<Record<AntDesignName['name'], Layout>>>({})
 
   const iconCellSize = Math.max(40, Math.floor((windowWidth - 102) / 6))
   const iconSize = Math.max(18, Math.round(iconCellSize * 0.55))
 
   const icons: AntDesignName['name'][] = ["unordered-list", "shopping-cart", "shop", "home", "car", "mobile", "coffee", "contacts", "tool", "dollar", "star", "sun", "heart", "bank", "bar-chart", "book", "bulb", "compass", "control", "credit-card", "dashboard", "edit", "environment", "experiment", "instagram", "laptop", "team", "tags", "rest", "read"]
-
-  const handleCreateList = () => {
-    const newLists = [...lists]
-    newLists.push({
-      id: Date.now(),
-      color: color,
-      icon: icon,
-      orderNumber: lists.length + 1,
-      title,
-      tasks: [],
-      tasksDone: []
-    })
-    setLists(newLists)
-    setModal(false)
-  }
 
   const handleChangeIcon = (nextIcon: AntDesignName['name']) => {
     if (nextIcon === icon) return
@@ -109,6 +89,38 @@ export default function NewListModal({ setModal }: NewListModalProps) {
         useNativeDriver: true,
       }).start()
     })
+  }
+
+  const handleCreateList = () => {
+    const newLists = [...lists]
+    newLists.push({
+      id: Date.now(),
+      color: color,
+      icon: icon,
+      orderNumber: lists.length + 1,
+      title,
+      tasks: [],
+      tasksDone: [],
+      showTasksDone: true
+    })
+    setLists(newLists)
+    setModal(false)
+  }
+
+  const handleEditList = () => {
+    const newLists = lists.map(listInfo => {
+      if (listInfo.id === list!.id) {
+        return {
+          ...listInfo,
+          color,
+          icon,
+          title
+        }
+      }
+      return listInfo
+    })
+    setLists(newLists)
+    setModal(false)
   }
 
   return (
@@ -162,13 +174,13 @@ export default function NewListModal({ setModal }: NewListModalProps) {
                   : title.trim() === "" ? theme.colors.listColor.light : theme.colors.greenSuccess.light,
               }
             ]}
-            onPress={() => handleCreateList()}
+            onPress={() => list ? handleEditList() : handleCreateList()}
           >
             <Octicons name="check" size={28} color={isDarkMode ? theme.colors.textColor.dark : theme.colors.textColor.light} />
           </TouchableOpacity>
         </View>
 
-        <Text style={[styles.modalTitleText, { color: textColor }]}>{translateFn("createList")}</Text>
+        <Text style={[styles.modalTitleText, { color: textColor }]}>{translateFn(list ? "editList" : "createList")}</Text>
         
         <TextInput
           style={[styles.modalTextInput, { color: textColor, backgroundColor: modalSecondColor }]}
@@ -220,7 +232,7 @@ export default function NewListModal({ setModal }: NewListModalProps) {
                   //toma los valores de posicion y tamaño al renderizar
                   const layout = event.nativeEvent.layout
                   //crea un objeto con esos valores para el icono especifico
-                  const nextLayout: IconLayout = {
+                  const nextLayout: Layout = {
                     x: layout.x,
                     y: layout.y,
                     width: layout.width,

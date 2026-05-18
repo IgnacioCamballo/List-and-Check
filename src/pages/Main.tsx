@@ -3,15 +3,16 @@ import { Animated, Platform, StyleSheet, TouchableOpacity, View } from 'react-na
 import { useNavigation } from '@react-navigation/native'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import type { RootStackParamList } from '../navigation/types';
+import { Entypo } from '@expo/vector-icons';
 
 import useTask from '../hooks/useTask';
 import theme from '../theme/theme';
+import { Layout } from '../types';
 
 import List from '../components/List';
-import NewListModal from '../components/modals/NewListModal';
+import NewListModal from '../components/modals/ListModal';
 import ConfigModal from '../components/modals/ConfigModal';
 import ConfigGear from '../components/basic/svg/ConfigGear';
-import { Entypo } from '@expo/vector-icons';
 
 export default function Main() {
   const {lists, isDarkMode} = useTask()
@@ -19,6 +20,7 @@ export default function Main() {
 
   const [newListModal, setNewListModal] = useState(false)
   const [configModal, setConfigModal] = useState(false)
+  const [listsLayout, setListsLayout] = useState<Partial<Record<string, Layout>>>({})
 
   const bgColorStyleValue = useRef(new Animated.Value(isDarkMode ? 1 : 0)).current
 
@@ -44,7 +46,7 @@ export default function Main() {
           activeOpacity={0.9}
           onPress={() => setConfigModal(true)}
           >
-          <ConfigGear width={40} height={40}/>
+          <ConfigGear width={40} height={40}/> 
         </TouchableOpacity>
         <TouchableOpacity 
           style={styles.btnNewList}
@@ -59,6 +61,17 @@ export default function Main() {
           <List
             key={listInfo.id}
             list={listInfo}
+            //al renderizar guarda las posiciones y tamaño de cada lista para luego animar la transición al abrir la TaskPage
+            onLayout={(event: { nativeEvent: { layout: Layout } }) => {
+              const layout = event.nativeEvent.layout
+              const nextLayout: Layout = {
+                x: layout.x,
+                y: layout.y,
+                width: layout.width,
+                height: layout.height
+              }
+              setListsLayout(prev => ({...prev, [listInfo.id]: nextLayout}))
+            }}
             onPress={() => navigation.navigate('TaskPage', { listId: listInfo.id })}
           />
         )}
@@ -91,11 +104,6 @@ const styles = StyleSheet.create({
     borderRadius: "50%",
     marginRight: 0,
     marginBottom: 12
-  },
-  btnNewListText: {
-    fontSize: 36,
-    fontWeight: "bold",
-    lineHeight: 36
   },
   listsContainer: {
     flex: 1,

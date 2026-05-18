@@ -28,6 +28,10 @@ const theme = {
       light: "#4b4b4b",
       dark: "#a5a5a5"
     },
+    tirthTextColor: {
+      light: "#7c7c7c",
+      dark: "#5e5e5e"
+    },
     buttonColor: {
       light: "#e0e0e0",
       dark: "#2c2c2c"
@@ -45,7 +49,7 @@ const theme = {
     grey: "#444444",
     darkGrey: "#1a1a1a",
     black: "#000000",
-    lightBlue: "#7b90bc",
+    lightBlue: "#838ea5",
     red: "#d62323",
     lightRed: "#ab4d4d",
   },

@@ -7,6 +7,10 @@
     {"lenguage": "es", "text": "Crear Lista"},
     {"lenguage": "en", "text": "Create List"}
   ],
+  "editList": [
+    {"lenguage": "es", "text": "Editar Lista"},
+    {"lenguage": "en", "text": "Edit List"}
+  ],
   "selectColor": [
     {"lenguage": "es", "text": "Seleccionar Color"},
     {"lenguage": "en", "text": "Select Color"}
@@ -30,5 +34,13 @@
   "icon": [
     {"lenguage": "es", "text": "Icono"},
     {"lenguage": "en", "text": "Icon"}
+  ],
+  "listNotFound": [
+    {"lenguage": "es", "text": "Lista no encontrada"},
+    {"lenguage": "en", "text": "List not found"}
+  ],
+  "completed": [
+    {"lenguage": "es", "text": "Completadas"},
+    {"lenguage": "en", "text": "Completed"}
   ]
 }

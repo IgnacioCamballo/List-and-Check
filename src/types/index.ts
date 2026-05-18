@@ -17,7 +17,15 @@ export type ListType = {
   icon: string,
   title: string,
   tasks: Task[] | [],
-  tasksDone: Task[] | []
+  tasksDone: Task[] | [],
+  showTasksDone: boolean
+}
+
+export type Layout = {
+  x: number,
+  y: number,
+  width: number,
+  height: number
 }
 
 export type TaskContextProps = {   
