@@ -3,6 +3,10 @@
     {"lenguage": "es", "text": "Tarea"},
     {"lenguage": "en", "text": "Task"}
   ],
+  "addTask": [
+    {"lenguage": "es", "text": "Agregar Tarea"},
+    {"lenguage": "en", "text": "Add Task"}
+  ],
   "createList": [
     {"lenguage": "es", "text": "Crear Lista"},
     {"lenguage": "en", "text": "Create List"}
@@ -42,5 +46,17 @@
   "completed": [
     {"lenguage": "es", "text": "Completadas"},
     {"lenguage": "en", "text": "Completed"}
+  ],
+  "done": [
+    {"lenguage": "es", "text": "Listo"},
+    {"lenguage": "en", "text": "Done"}
+  ],
+  "tasksDeleteAlert": [
+    {"lenguage": "es", "text": "¿Eliminar las tareas completadas?"},
+    {"lenguage": "en", "text": "Delete completed tasks?"}
+  ],
+  "cancel": [
+    {"lenguage": "es", "text": "Cancelar"},
+    {"lenguage": "en", "text": "Cancel"}
   ]
 }
