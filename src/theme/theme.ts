@@ -2,12 +2,14 @@ import { Platform } from "react-native"
 
 const theme = {
   bannerHeight: Platform.OS === "ios" ? 70 : 80,
-  banners: {
-
-    // the bottom ones are test ads
-    calendar: "ca-app-pub-3940256099942544/9214589741",
-  },
-  colors: {
+  banner: 
+    // production adds
+    // Platform.OS === "ios" ? "ca-app-pub-4926030013898312/2756357550" : "ca-app-pub-4926030013898312/8531428410"
+    
+    // test ads
+    Platform.OS === "ios" ? "ca-app-pub-3940256099942544/2934735716" : "ca-app-pub-3940256099942544/2934735716"
+    ,
+    colors: {
     baseColor: {
       light: "#dedede",
       dark: "#000000"

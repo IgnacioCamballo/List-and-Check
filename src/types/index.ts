@@ -33,6 +33,7 @@ export type TaskContextProps = {
     lenguage: string,
     isDarkMode: boolean,
     lists: ListType[] | [],
+    addsInitialized: boolean,
     setConfigInfo: React.Dispatch<React.SetStateAction<ConfigInfo>>,
     setLenguage: React.Dispatch<React.SetStateAction<string>>,
     setIsDarkMode: React.Dispatch<React.SetStateAction<boolean>>

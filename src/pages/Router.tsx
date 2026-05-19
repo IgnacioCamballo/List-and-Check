@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { StatusBar, StyleSheet, Text, View } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
+import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads'
 
 import theme from '../theme/theme'
 import useTask from '../hooks/useTask'
@@ -16,7 +17,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>()
 type RouteName = keyof RootStackParamList
 
 function RouterContent({ routeName }: { routeName: RouteName }) {
-  const { isDarkMode, configInfo } = useTask()
+  const { isDarkMode, configInfo, addsInitialized } = useTask()
 
   const statusBarColor = routeName === 'Load' ? '#ffffff' : configInfo.baseColor
   const statusBarTextStyle = routeName === 'Load' ? 'dark-content' : isDarkMode ? 'light-content' : 'dark-content'
@@ -34,7 +35,18 @@ function RouterContent({ routeName }: { routeName: RouteName }) {
           <Stack.Screen name="TaskPage" component={TaskPage} />
         </Stack.Navigator>
       </View>
-      <Text style={styles.publicidad}>Publicidad</Text>
+      
+      {addsInitialized && 
+        <View style={styles.publicidad}>
+          <BannerAd 
+            size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+            unitId={theme.banner}
+            requestOptions={{
+              requestNonPersonalizedAdsOnly: true
+            }}
+          />
+        </View>
+      }
     </View>
   )
 }
@@ -66,9 +78,6 @@ const styles = StyleSheet.create({
   publicidad: {
     width: '100%',
     height: theme.bannerHeight,
-    backgroundColor: '#6baa9d',
-    textAlign: 'center',
-    textAlignVertical: 'center',
     zIndex: 100
   },
 });

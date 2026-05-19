@@ -1,6 +1,7 @@
 import { createContext, useEffect, useState } from "react"
 import { useColorScheme } from "react-native"
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import { MobileAds } from 'react-native-google-mobile-ads';
 
 import { ConfigInfo, ListType, TaskContextProps } from "../types"
 import theme from "../theme/theme"
@@ -20,68 +21,30 @@ const TaskProvider = ({ children }: props) => {
     textColor: colorScheme === "dark" ? theme.colors.textColor.dark : theme.colors.textColor.light,
   }
   
-  //usado solo para test 
-  const testLists = [
-    {
-      id: 1,
-      color: "#d62323",
-      icon: "unordered-list",
-      orderNumber: 1,
-      title: "escuela",
-      tasks: [{
-        id: 1111,
-        orderNumber: 1,
-        content: "hacer tarea"
-      },
-      {
-        id: 1112,
-        orderNumber: 2,
-        content: "hacer la otra"
-      }],
-      tasksDone: [],
-      showTasksDone: true
-
-    },
-    {
-      id: 2,
-      color: "#d6d623",
-      icon: "unordered-list",
-      orderNumber: 2,
-      title: "trabajo",
-      tasks: [{
-        id: 1111,
-        orderNumber: 1,
-        content: "trabajar"
-      }],
-      tasksDone: [],
-      showTasksDone: true
-
-    },
-    {
-      id: 3,
-      color: "#d6d62",
-      icon: "unordered-list",
-      orderNumber: 3,
-      title: "trabajo",
-      tasks: [{
-        id: 1111,
-        orderNumber: 1,
-        content: "trabajar"
-      }],
-      tasksDone: [],
-      showTasksDone: true
-    }
-  ]
-  
   const [configInfo, setConfigInfo] = useState<ConfigInfo>(initialCofigInfo)
   const [lenguage, setLenguage] = useState("es")
   const [isDarkMode, setIsDarkMode] = useState<boolean>(colorScheme === "dark" ? true : false)
-  const [lists, setLists] = useState<ListType[]>(testLists)
+  const [lists, setLists] = useState<ListType[]>([])
+  const [addsInitialized, setAddsInitialized] = useState(false)
   
   useEffect(() => {
     const appInfo = {lenguage, isDarkMode, lists}
     AsyncStorage.setItem("appInfoStorage", JSON.stringify(appInfo))
   }, [lenguage, isDarkMode, lists])
+
+  //Initializes adds
+  const addsInit = async () => {
+    try {
+      await MobileAds().initialize()
+      setAddsInitialized(true)
+    } catch (error) {
+      console.log(error)
+    }
+  }   
+
+  useEffect(() => {
+    addsInit()
+  }, [])
 
   return (
     <TaskContext.Provider 
@@ -90,6 +53,7 @@ const TaskProvider = ({ children }: props) => {
         lenguage,
         isDarkMode,
         lists,
+        addsInitialized,
         setConfigInfo,
         setLenguage,
         setIsDarkMode,
