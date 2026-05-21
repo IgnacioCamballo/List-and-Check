@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
-import { StatusBar, StyleSheet, Text, View } from 'react-native'
+import { StatusBar, StyleSheet, View } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads'
+import type { RootStackParamList } from '../types'
 
 import theme from '../theme/theme'
 import useTask from '../hooks/useTask'
@@ -10,7 +11,6 @@ import useTask from '../hooks/useTask'
 import LoadScreen from './LoadScreen'
 import Main from './Main'
 import TaskPage from './TaskPage'
-import type { RootStackParamList } from '../navigation/types'
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
 
@@ -32,7 +32,7 @@ function RouterContent({ routeName }: { routeName: RouteName }) {
         >
           <Stack.Screen name="Load" component={LoadScreen} />
           <Stack.Screen name="Main" component={Main} />
-          <Stack.Screen name="TaskPage" component={TaskPage} />
+          <Stack.Screen name="TaskPage" component={TaskPage} options={{ animation: 'none' }} />
         </Stack.Navigator>
       </View>
       

@@ -28,6 +28,12 @@ export type Layout = {
   height: number
 }
 
+export type RootStackParamList = {
+  Load: undefined,
+  Main: undefined,
+  TaskPage: { listId: number; originLayout?: { x: number; y: number; width: number; height: number } },
+}
+
 export type TaskContextProps = {   
     configInfo: ConfigInfo,
     lenguage: string,

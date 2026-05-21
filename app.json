@@ -7,8 +7,6 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/splash-icon.png",
-      "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
@@ -17,14 +15,11 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#ffffff"
       },
       "predictiveBackGestureEnabled": false,
       "package": "com.kanatzustudio.listandcheck"
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
     },
     "plugins": [
       [

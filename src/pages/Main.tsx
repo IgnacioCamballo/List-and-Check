@@ -2,12 +2,11 @@ import React, { useEffect, useRef, useState } from 'react'
 import { Animated, Platform, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import type { RootStackParamList } from '../navigation/types';
+import type { RootStackParamList } from '../types';
 import { Entypo } from '@expo/vector-icons';
 
 import useTask from '../hooks/useTask';
 import theme from '../theme/theme';
-import { Layout } from '../types';
 
 import List from '../components/List';
 import NewListModal from '../components/modals/ListModal';
@@ -20,7 +19,6 @@ export default function Main() {
 
   const [newListModal, setNewListModal] = useState(false)
   const [configModal, setConfigModal] = useState(false)
-  const [listsLayout, setListsLayout] = useState<Partial<Record<string, Layout>>>({})
 
   const bgColorStyleValue = useRef(new Animated.Value(isDarkMode ? 1 : 0)).current
 
@@ -61,18 +59,7 @@ export default function Main() {
           <List
             key={listInfo.id}
             list={listInfo}
-            //al renderizar guarda las posiciones y tamaño de cada lista para luego animar la transición al abrir la TaskPage
-            onLayout={(event: { nativeEvent: { layout: Layout } }) => {
-              const layout = event.nativeEvent.layout
-              const nextLayout: Layout = {
-                x: layout.x,
-                y: layout.y,
-                width: layout.width,
-                height: layout.height
-              }
-              setListsLayout(prev => ({...prev, [listInfo.id]: nextLayout}))
-            }}
-            onPress={() => navigation.navigate('TaskPage', { listId: listInfo.id })}
+            onPress={(originLayout) => navigation.navigate('TaskPage', { listId: listInfo.id, originLayout })}
           />
         )}
       </View>

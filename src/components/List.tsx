@@ -3,62 +3,78 @@ import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-nati
 import { AntDesign } from '@expo/vector-icons'
 
 import theme from '../theme/theme'
-import { Layout, ListType } from '../types'
+import { ListType } from '../types'
 import useTask from '../hooks/useTask'
+
+export type ListLayout = {
+  x: number
+  y: number
+  width: number
+  height: number
+}
 
 type ListProps = {
   list: ListType
-  onPress: () => void
-  onLayout?: (event: { nativeEvent: { layout: Layout } }) => void
+  onPress: (layout: ListLayout) => void
 }
 
-export default function List({list, onPress, onLayout}: ListProps) {
+export default function List({list, onPress}: ListProps) {
   const {isDarkMode} = useTask()
   const textColor = isDarkMode ? theme.colors.textColor.dark : theme.colors.textColor.light
   const lineColor = isDarkMode ? theme.colors.grey : theme.colors.secondTextColor.dark
+  const cardRef = React.useRef<View>(null)
 
   const listContWidth = (Dimensions.get("screen").width - 58) / 2
   //el icono se renderiza con el nombre guardado en list.icon, que es una propiedad de AntDesign, por lo que se castea a ese tipo para usarlo como nombre del icono
   const iconName = list.icon as keyof typeof AntDesign.glyphMap
 
   return (
-    <TouchableOpacity 
+    <View
+      ref={cardRef}
+      collapsable={false}
       style={[
         styles.listContainer, {
         backgroundColor: isDarkMode ? theme.colors.secondBaseColor.dark : theme.colors.secondBaseColor.light,
         minWidth: listContWidth,
         maxWidth: listContWidth
       }]}
-      activeOpacity={0.85}
-      onPress={onPress}
-      onLayout={onLayout}
     >
-      <View style={styles.row}>
-        <AntDesign style={{transform: [{translateY: -2}]}} name={iconName} size={24} color={list.color} />
-        
-        <Text style={[styles.lengthText, {color: textColor}]}>{list.tasks.length}</Text>
-      </View>
+      <TouchableOpacity
+        activeOpacity={0.85}
+        onPress={() => {
+          cardRef.current?.measureInWindow((x, y, width, height) => {
+            onPress({ x, y, width, height })
+          })
+        }}
+        style={styles.touchableContent}
+      >
+        <View style={styles.row}>
+          <AntDesign style={{transform: [{translateY: -2}]}} name={iconName} size={24} color={list.color} />
 
-      <Text 
-        style={[styles.title, {color: textColor}]}
-        numberOfLines={1} 
-        ellipsizeMode="clip"
-      >{list.title}</Text>
-      
-      <View style={[styles.line, {backgroundColor: lineColor}]}/>
-      
-      {list.tasks.slice(0, 3).map((task) => (
-        <View key={task.id} style={styles.taskBox}>
-          <View style={[styles.checkCircle, {borderColor: lineColor}]}/>
-          
-          <Text 
-            style={[styles.taskText, {color: lineColor}]}
-            numberOfLines={1} 
-            ellipsizeMode="clip"
-          >{task.content}</Text>
+          <Text style={[styles.lengthText, {color: textColor}]}>{list.tasks.length}</Text>
         </View>
-      ))}
-    </TouchableOpacity>
+
+        <Text
+          style={[styles.title, {color: textColor}]}
+          numberOfLines={1}
+          ellipsizeMode="clip"
+        >{list.title}</Text>
+
+        <View style={[styles.line, {backgroundColor: lineColor}]}/>
+
+        {list.tasks.slice(0, 3).map((task) => (
+          <View key={task.id} style={styles.taskBox}>
+            <View style={[styles.checkCircle, {borderColor: lineColor}]}/>
+
+            <Text
+              style={[styles.taskText, {color: lineColor}]}
+              numberOfLines={1}
+              ellipsizeMode="clip"
+            >{task.content}</Text>
+          </View>
+        ))}
+      </TouchableOpacity>
+    </View>
   )
 }
 
@@ -75,6 +91,9 @@ const styles = StyleSheet.create({
     elevation: 12,
     paddingHorizontal: 16,
     paddingVertical: 14
+  },
+  touchableContent: {
+    flex: 1
   },
   row: {
     flexDirection: "row",

@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Alert, Animated, Dimensions, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Alert, Animated, Dimensions, Easing, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import type { RouteProp } from '@react-navigation/native'
 import { AntDesign, Feather, Ionicons, MaterialIcons } from '@expo/vector-icons'
-import type { RootStackParamList } from '../navigation/types'
+import type { RootStackParamList } from '../types'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 
 import useTask from '../hooks/useTask'
@@ -16,6 +16,7 @@ export default function TaskPage() {
   const route = useRoute<RouteProp<RootStackParamList, 'TaskPage'>>()
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
   const { lists, setLists, isDarkMode, lenguage } = useTask()
+  const { width: screenWidth, height: screenHeight } = Dimensions.get('window')
 
   //asi evito llamar useTask en utils y translate puede ser usado dentro de funciones
   function translateFn(text: string) {
@@ -23,6 +24,7 @@ export default function TaskPage() {
   }
 
   const selectedList = lists.find((list) => list.id === route.params.listId)
+  const originLayout = route.params.originLayout
 
   //si no hay lista muestra mensaje de error
   if (!selectedList) {
@@ -36,7 +38,9 @@ export default function TaskPage() {
   const [editModal, setEditModal] = useState(false)
   const [addModal, setAddModal] = useState(false)
   const [movingTask, setMovingTask] = useState<number>(0) // id de la tarea que se esta moviendo, se usa para animar entrada y salida de las listas
+  const [isExpanded, setIsExpanded] = useState(false)
 
+  const listBgColor = isDarkMode ? theme.colors.baseColor.dark : theme.colors.baseColor.light
   const bgColor = isDarkMode ? theme.colors.secondBaseColor.dark : theme.colors.baseColor.light
   const textColor = isDarkMode ? theme.colors.textColor.dark : theme.colors.textColor.light
   const secondTextColor = isDarkMode ? theme.colors.tirthTextColor.dark : theme.colors.tirthTextColor.light
@@ -53,6 +57,82 @@ export default function TaskPage() {
   const [measuredTasksHeight, setMeasuredTasksHeight] = useState(0)
   const tasksHeight = useRef(new Animated.Value(0)).current
   const taskHeightsRef = useRef<Record<number, number>>({})
+  const cardAnimation = useRef(new Animated.Value(0)).current
+  const contentOpacity = useRef(new Animated.Value(originLayout ? 0 : 1)).current
+
+  const startRect = originLayout ?? { x: 0, y: 0, width: screenWidth, height: screenHeight }
+  const endRect = { x: 0, y: 0, width: screenWidth, height: screenHeight }
+
+  const shellOpacity = cardAnimation.interpolate({
+    inputRange: [0, 0.4, 1],
+    outputRange: [1, 0.35, 0],
+  })
+
+  const backgroundColor = cardAnimation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [listBgColor, bgColor],
+  })
+
+  const animatedCardStyle = {
+    position: 'absolute' as const,
+    left: cardAnimation.interpolate({ inputRange: [0, 1], outputRange: [startRect.x, endRect.x] }),
+    top: cardAnimation.interpolate({ inputRange: [0, 1], outputRange: [startRect.y, endRect.y] }),
+    width: cardAnimation.interpolate({ inputRange: [0, 1], outputRange: [startRect.width, endRect.width] }),
+    height: cardAnimation.interpolate({ inputRange: [0, 1], outputRange: [startRect.height, endRect.height] }),
+    borderRadius: cardAnimation.interpolate({ inputRange: [0, 1], outputRange: [24, 0] }),
+    overflow: 'hidden' as const,
+  }
+
+  useEffect(() => {
+    if (!originLayout) {
+      cardAnimation.setValue(1)
+      contentOpacity.setValue(1)
+      setIsExpanded(true)
+      return
+    }
+
+    cardAnimation.setValue(0)
+    contentOpacity.setValue(0)
+    requestAnimationFrame(() => {
+      Animated.timing(cardAnimation, {
+        toValue: 1,
+        duration: 300,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: false,
+      }).start(() => {
+        setIsExpanded(true)
+        Animated.timing(contentOpacity, {
+          toValue: 1,
+          duration: 100,
+          easing: Easing.out(Easing.quad),
+          useNativeDriver: false,
+        }).start()
+      })
+    })
+  }, [cardAnimation, originLayout])
+
+  const closeWithAnimation = () => {
+    if (!originLayout) {
+      navigation.goBack()
+      return
+    }
+
+    setIsExpanded(false)
+    Animated.parallel([
+      Animated.timing(contentOpacity, {
+        toValue: 0,
+        duration: 170,
+        easing: Easing.in(Easing.quad),
+        useNativeDriver: false,
+      }),
+      Animated.timing(cardAnimation, {
+      toValue: 0,
+        duration: 400,
+        easing: Easing.in(Easing.cubic),
+        useNativeDriver: false,
+      }),
+    ]).start(() => navigation.goBack())
+  }
 
   const handleHideTasksDone = () => {
     const newListInfo = {
@@ -193,12 +273,13 @@ export default function TaskPage() {
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: bgColor }]}>
+    <Animated.View style={[styles.container, { backgroundColor }]}>
+      <Animated.View style={[styles.pageContent, { opacity: contentOpacity }]}> 
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={[styles.btn, { backgroundColor: buttonColor }]}
           activeOpacity={0.9}
-          onPress={() => navigation.goBack()}
+          onPress={closeWithAnimation}
         >
           <Ionicons name="chevron-back" size={24} color={selectedList.color} />
         </TouchableOpacity>
@@ -312,14 +393,35 @@ export default function TaskPage() {
 
       {editModal && <ListModal setModal={setEditModal} list={selectedList} />}
       {addModal && <AddTaskModal closeModal={() => setAddModal(false)} listId={selectedList.id} />}
-    </View>
+      </Animated.View>
+
+      {originLayout && (
+        <Animated.View
+          pointerEvents="none"
+          style={[
+            styles.transitionShell,
+            animatedCardStyle,
+            {
+              backgroundColor: bgColor,
+              opacity: shellOpacity,
+            },
+          ]}
+        />
+      )}
+    </Animated.View>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    position: "relative"
+  },
+  pageContent: {
+    flex: 1,
+  },
+  transitionShell: {
+    zIndex: 10,
+    elevation: 10,
   },
   buttonContainer: {
     flexDirection: "row",
