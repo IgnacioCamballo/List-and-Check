@@ -26,6 +26,7 @@ const TaskProvider = ({ children }: props) => {
   const [isDarkMode, setIsDarkMode] = useState<boolean>(colorScheme === "dark" ? true : false)
   const [lists, setLists] = useState<ListType[]>([])
   const [addsInitialized, setAddsInitialized] = useState(false)
+  const [runAnimationAfterList, setRunAnimationAfterList] = useState(false)
   
   useEffect(() => {
     const appInfo = {lenguage, isDarkMode, lists}
@@ -54,10 +55,12 @@ const TaskProvider = ({ children }: props) => {
         isDarkMode,
         lists,
         addsInitialized,
+        runAnimationAfterList,
         setConfigInfo,
         setLenguage,
         setIsDarkMode,
-        setLists
+        setLists,
+        setRunAnimationAfterList
       }}>
       {children}
     </TaskContext.Provider>

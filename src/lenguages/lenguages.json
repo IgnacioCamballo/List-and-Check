@@ -7,6 +7,10 @@
     {"lenguage": "es", "text": "Agregar Tarea"},
     {"lenguage": "en", "text": "Add Task"}
   ],
+  "editTask": [
+    {"lenguage": "es", "text": "Editar Tarea"},
+    {"lenguage": "en", "text": "Edit Task"}
+  ],
   "createList": [
     {"lenguage": "es", "text": "Crear Lista"},
     {"lenguage": "en", "text": "Create List"}

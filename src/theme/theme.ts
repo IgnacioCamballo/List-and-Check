@@ -4,10 +4,10 @@ const theme = {
   bannerHeight: Platform.OS === "ios" ? 70 : 80,
   banner: 
     // production adds
-    // Platform.OS === "ios" ? "ca-app-pub-4926030013898312/2756357550" : "ca-app-pub-4926030013898312/8531428410"
+    Platform.OS === "ios" ? "ca-app-pub-4926030013898312/2756357550" : "ca-app-pub-4926030013898312/8531428410"
     
     // test ads
-    Platform.OS === "ios" ? "ca-app-pub-3940256099942544/2934735716" : "ca-app-pub-3940256099942544/2934735716"
+    //Platform.OS === "ios" ? "ca-app-pub-3940256099942544/2934735716" : "ca-app-pub-3940256099942544/2934735716"
     ,
     colors: {
     baseColor: {

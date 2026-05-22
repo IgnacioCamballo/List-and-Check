@@ -1,28 +1,22 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { AntDesign } from '@expo/vector-icons'
 
 import theme from '../theme/theme'
-import { ListType } from '../types'
+import { Layout, ListType } from '../types'
 import useTask from '../hooks/useTask'
-
-export type ListLayout = {
-  x: number
-  y: number
-  width: number
-  height: number
-}
 
 type ListProps = {
   list: ListType
-  onPress: (layout: ListLayout) => void
+  onPress?: (layout: Layout, listId: number) => void
+  isShell: boolean 
 }
 
-export default function List({list, onPress}: ListProps) {
+export default function List({list, onPress, isShell}: ListProps) {
   const {isDarkMode} = useTask()
   const textColor = isDarkMode ? theme.colors.textColor.dark : theme.colors.textColor.light
   const lineColor = isDarkMode ? theme.colors.grey : theme.colors.secondTextColor.dark
-  const cardRef = React.useRef<View>(null)
+  const cardRef = useRef<View>(null)
 
   const listContWidth = (Dimensions.get("screen").width - 58) / 2
   //el icono se renderiza con el nombre guardado en list.icon, que es una propiedad de AntDesign, por lo que se castea a ese tipo para usarlo como nombre del icono
@@ -34,16 +28,23 @@ export default function List({list, onPress}: ListProps) {
       collapsable={false}
       style={[
         styles.listContainer, {
-        backgroundColor: isDarkMode ? theme.colors.secondBaseColor.dark : theme.colors.secondBaseColor.light,
-        minWidth: listContWidth,
-        maxWidth: listContWidth
-      }]}
+          backgroundColor: isDarkMode ? theme.colors.secondBaseColor.dark : theme.colors.secondBaseColor.light,
+          //si es shell oculto el shadow y saco el width fijo para la animacion
+          minWidth: isShell ? "auto" : listContWidth,
+          maxWidth: isShell ? "auto" : listContWidth,
+          shadowOffset: isShell ? { width: 0, height: 0 } : { width: 4, height: 4 },
+          shadowColor: theme.colors.black,
+          shadowOpacity: isShell ? 0 : 0.8,
+          shadowRadius: isShell ? 0 : 4,
+          elevation: isShell ? 0 : 12
+        }
+      ]}
     >
       <TouchableOpacity
-        activeOpacity={0.85}
+        activeOpacity={0.85} 
         onPress={() => {
           cardRef.current?.measureInWindow((x, y, width, height) => {
-            onPress({ x, y, width, height })
+            onPress?.({ width, height, x, y }, list.id)
           })
         }}
         style={styles.touchableContent}
@@ -81,14 +82,9 @@ export default function List({list, onPress}: ListProps) {
 const styles = StyleSheet.create({
   listContainer: {
     flex: 1,
+    overflow: "hidden",
     borderRadius: 24,
     height: 160,
-    overflow: "hidden",
-    shadowOffset: { width: 4, height: 4 },
-    shadowColor: theme.colors.black,
-    shadowOpacity: 0.8,
-    shadowRadius: 4,
-    elevation: 12,
     paddingHorizontal: 16,
     paddingVertical: 14
   },

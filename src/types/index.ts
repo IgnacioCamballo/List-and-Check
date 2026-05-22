@@ -31,7 +31,7 @@ export type Layout = {
 export type RootStackParamList = {
   Load: undefined,
   Main: undefined,
-  TaskPage: { listId: number; originLayout?: { x: number; y: number; width: number; height: number } },
+  TaskPage: { listId: number },
 }
 
 export type TaskContextProps = {   
@@ -40,8 +40,10 @@ export type TaskContextProps = {
     isDarkMode: boolean,
     lists: ListType[] | [],
     addsInitialized: boolean,
+    runAnimationAfterList: boolean,
     setConfigInfo: React.Dispatch<React.SetStateAction<ConfigInfo>>,
     setLenguage: React.Dispatch<React.SetStateAction<string>>,
-    setIsDarkMode: React.Dispatch<React.SetStateAction<boolean>>
-    setLists: React.Dispatch<React.SetStateAction<ListType[] | []>>
+    setIsDarkMode: React.Dispatch<React.SetStateAction<boolean>>,
+    setLists: React.Dispatch<React.SetStateAction<ListType[] | []>>,
+    setRunAnimationAfterList: React.Dispatch<React.SetStateAction<boolean>>
 }

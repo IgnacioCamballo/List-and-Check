@@ -30,18 +30,18 @@ export default function LoadScreen() {
         Animated.parallel([
           Animated.timing(iconScale, {
             toValue: 1.3,
-            duration: 600,
+            duration: 300,
             useNativeDriver: true,
           }),
           Animated.timing(iconOpacity, {
             toValue: 1,
-            duration: 600,
+            duration: 300,
             useNativeDriver: true,
           })
         ]),
         Animated.spring(iconScale, {
           toValue: 1,
-          velocity: 2.8,
+          velocity: 4,
           tension: 40,
           friction: 5.8,
           useNativeDriver: true,
