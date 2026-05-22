@@ -1,15 +1,17 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Alert, Animated, Dimensions, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Alert, Animated, Dimensions, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import type { RouteProp } from '@react-navigation/native'
 import { AntDesign, Feather, Ionicons, MaterialIcons } from '@expo/vector-icons'
 import type { RootStackParamList } from '../types'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { LinearGradient } from 'expo-linear-gradient'
 
 import useTask from '../hooks/useTask'
 import theme from '../theme/theme'
-import ListModal from '../components/modals/ListModal'
 import { translate } from '../utils'
+
+import ListModal from '../components/modals/ListModal'
 import AddTaskModal from '../components/modals/AddTaskModal'
 import EditTaskModal from '../components/modals/EditTaskModal'
 
@@ -40,6 +42,7 @@ export default function TaskPage() {
   const [movingTask, setMovingTask] = useState<number>(0) // id de la tarea que se esta moviendo, se usa para animar entrada y salida de las listas
 
   const bgColor = isDarkMode ? theme.colors.secondBaseColor.dark : theme.colors.baseColor.light
+  const bgColorWithOpacity = isDarkMode ? theme.colors.secondBaseColor.transparentDark : theme.colors.baseColor.transparentLight
   const textColor = isDarkMode ? theme.colors.textColor.dark : theme.colors.textColor.light
   const secondTextColor = isDarkMode ? theme.colors.tirthTextColor.dark : theme.colors.tirthTextColor.light
   const buttonColor = isDarkMode ? theme.colors.listColor.dark : theme.colors.white
@@ -215,7 +218,113 @@ export default function TaskPage() {
   return (
     <View style={[styles.container, { backgroundColor: bgColor }]}>
       <Animated.View style={{ flex: 1, opacity: StartingOpacityValue }}>
-        <View style={styles.buttonContainer}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+          style={styles.scrollView}
+        >
+          {/* Lista de tareas sin hacer */}
+          <View
+            onLayout={(event) => {
+              if (measuredTasksHeight === 0) {
+                setMeasuredTasksHeight(event.nativeEvent.layout.height)
+              }
+            }}
+          >
+            <Animated.View style={{ height: measuredTasksHeight === 0 ? "auto" : tasksHeight }}>
+              {selectedList.tasks.map(task => (
+                <Animated.View
+                  key={task.id}
+                  style={{ opacity: movingTask === task.id ? opacityMovingTask : 1 }}
+                  onLayout={(event) => handleSaveLayoutTask(task.id, event.nativeEvent.layout.height)}
+                >
+                  <View style={styles.taskRow}>
+                    <TouchableOpacity activeOpacity={1} onPress={() => moveTaskToDone(task.id)}>
+                      <View style={[styles.checkCircle, { borderColor: selectedList.color }]} />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity activeOpacity={1} onPress={() => setEditingTask(task.id)}>
+                      <Text style={[styles.taskText, { color: textColor }]}>{task.content}</Text>
+                    </TouchableOpacity>
+                  </View>
+                </Animated.View>
+              ))}
+            </Animated.View>
+          </View>
+
+          {/* Linea separadora */}
+          {selectedList.tasksDone.length > 0 && (
+            <View style={styles.tasksDivider}>
+              <Animated.View style={{ opacity: opacityValue }}>
+                <TouchableOpacity
+                  activeOpacity={1}
+                  style={{ marginVertical: 8, marginLeft: 2 }}
+                  onPress={() => handleHideTasksDone()}
+                >
+                  <Feather
+                    name={selectedList.showTasksDone ? "eye" : "eye-off"}
+                    size={20}
+                    color={secondTextColor}
+                  />
+                </TouchableOpacity>
+              </Animated.View>
+              <View style={[styles.dividerLine, { backgroundColor: secondTextColor }]} />
+              <Text style={[styles.sectionTitle, { color: secondTextColor }]}>{translateFn("completed")}</Text>
+              <View style={[styles.dividerLine, { backgroundColor: secondTextColor }]} />
+
+              <TouchableOpacity
+                activeOpacity={1}
+                style={[styles.deleteButton, { borderColor: secondTextColor }]}
+                onPress={() => showDeleteTasksDoneAlert()}
+              >
+                <MaterialIcons name="delete" size={16} color={secondTextColor} />
+              </TouchableOpacity>
+            </View>
+          )}
+
+          {/* Lista de tareas hechas */}
+          <Animated.View style={{ opacity: opacityValueTasksDone }}>
+            {selectedList.showTasksDone && selectedList.tasksDone.map(task => (
+              <Animated.View
+                key={task.id}
+                style={{ opacity: movingTask === task.id ? opacityMovingTask : 1 }}
+              >
+                <TouchableOpacity
+                  key={task.id}
+                  style={styles.taskRow}
+                  activeOpacity={1}
+                  onPress={() => moveTaskToNotDone(task.id)}
+                >
+                  <View style={[styles.checkedCircle, { backgroundColor: selectedList.color }]}>
+                    <AntDesign name="check" size={14} color={theme.colors.white} />
+                  </View>
+                  <Text style={[styles.taskText, { color: textColor }]}>{task.content}</Text>
+                </TouchableOpacity>
+              </Animated.View>
+            ))}
+          </Animated.View>
+        </ScrollView>
+
+        <TouchableOpacity
+          style={[styles.btnAdd, { backgroundColor: buttonColor }]}
+          activeOpacity={0.9}
+          onPress={() => setAddModal(true)}
+        >
+          <Feather name="plus" size={32} color={selectedList.color} />
+        </TouchableOpacity>
+
+        {editModal && <ListModal setModal={setEditModal} list={selectedList} />}
+        {addModal && <AddTaskModal closeModal={() => setAddModal(false)} listId={selectedList.id} />}
+        {editingTask !== null && <EditTaskModal closeModal={() => setEditingTask(null)} listId={selectedList.id} taskId={editingTask}/>}
+
+        <View style={styles.buttonContainer} pointerEvents="box-none">
+          <LinearGradient
+            colors={[bgColor, bgColorWithOpacity]}
+            start={{ x: 0, y: 0.8 }}
+            end={{ x: 0, y: 1 }}
+            style={StyleSheet.absoluteFillObject}
+            pointerEvents="none"
+          />
           <TouchableOpacity
             style={[styles.btn, { backgroundColor: buttonColor }]}
             activeOpacity={0.9}
@@ -242,99 +351,6 @@ export default function TaskPage() {
             <Feather name="edit-3" size={24} color={selectedList.color} />
           </TouchableOpacity>
         </View>
-
-        {/* Lista de tareas sin hacer */}
-        <View
-          onLayout={(event) => {
-            if (measuredTasksHeight === 0) {
-              setMeasuredTasksHeight(event.nativeEvent.layout.height)
-            }
-          }}
-        >
-          <Animated.View style={{ height: measuredTasksHeight === 0 ? "auto" : tasksHeight }}>
-            {selectedList.tasks.map(task => (
-              <Animated.View
-                key={task.id}
-                style={{ opacity: movingTask === task.id ? opacityMovingTask : 1 }}
-                onLayout={(event) => handleSaveLayoutTask(task.id, event.nativeEvent.layout.height)}
-              >
-                <View style={styles.taskRow}>
-                  <TouchableOpacity activeOpacity={1} onPress={() => moveTaskToDone(task.id)}>
-                    <View style={[styles.checkCircle, { borderColor: selectedList.color }]} />
-                  </TouchableOpacity>
-
-                  <TouchableOpacity activeOpacity={1} onPress={() => setEditingTask(task.id)}>
-                    <Text style={[styles.taskText, { color: textColor }]}>{task.content}</Text>
-                  </TouchableOpacity>
-                </View>
-              </Animated.View>
-            ))}
-          </Animated.View>
-        </View>
-
-        {/* Linea separadora */}
-        {selectedList.tasksDone.length > 0 && (
-          <View style={styles.tasksDivider}>
-            <Animated.View style={{ opacity: opacityValue }}>
-              <TouchableOpacity
-                activeOpacity={1}
-                style={{ marginVertical: 8, marginLeft: 2 }}
-                onPress={() => handleHideTasksDone()}
-              >
-                <Feather
-                  name={selectedList.showTasksDone ? "eye" : "eye-off"}
-                  size={20}
-                  color={secondTextColor}
-                />
-              </TouchableOpacity>
-            </Animated.View>
-            <View style={[styles.dividerLine, { backgroundColor: secondTextColor }]} />
-            <Text style={[styles.sectionTitle, { color: secondTextColor }]}>{translateFn("completed")}</Text>
-            <View style={[styles.dividerLine, { backgroundColor: secondTextColor }]} />
-
-            <TouchableOpacity
-              activeOpacity={1}
-              style={[styles.deleteButton, { borderColor: secondTextColor }]}
-              onPress={() => showDeleteTasksDoneAlert()}
-            >
-              <MaterialIcons name="delete" size={16} color={secondTextColor} />
-            </TouchableOpacity>
-          </View>
-        )}
-
-        {/* Lista de tareas hechas */}
-        <Animated.View style={{ opacity: opacityValueTasksDone }}>
-          {selectedList.showTasksDone && selectedList.tasksDone.map(task => (
-            <Animated.View
-              key={task.id}
-              style={{ opacity: movingTask === task.id ? opacityMovingTask : 1 }}
-            >
-              <TouchableOpacity
-                key={task.id}
-                style={styles.taskRow}
-                activeOpacity={1}
-                onPress={() => moveTaskToNotDone(task.id)}
-              >
-                <View style={[styles.checkedCircle, { backgroundColor: selectedList.color }]}>
-                  <AntDesign name="check" size={14} color={theme.colors.white} />
-                </View>
-                <Text style={[styles.taskText, { color: textColor }]}>{task.content}</Text>
-              </TouchableOpacity>
-            </Animated.View>
-          ))}
-        </Animated.View>
-
-        <TouchableOpacity
-          style={[styles.btnAdd, { backgroundColor: buttonColor }]}
-          activeOpacity={0.9}
-          onPress={() => setAddModal(true)}
-        >
-          <Feather name="plus" size={32} color={selectedList.color} />
-        </TouchableOpacity>
-
-        {editModal && <ListModal setModal={setEditModal} list={selectedList} />}
-        {addModal && <AddTaskModal closeModal={() => setAddModal(false)} listId={selectedList.id} />}
-        {editingTask !== null && <EditTaskModal closeModal={() => setEditingTask(null)} listId={selectedList.id} taskId={editingTask}/>}
       </Animated.View>
     </View>
   )
@@ -346,12 +362,18 @@ const styles = StyleSheet.create({
     position: "relative"
   },
   buttonContainer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 20,
+    elevation: 20,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     paddingTop: Platform.OS === "ios" ? 60 : 40,
     paddingInline: 20,
-    marginBottom: 12,
+    paddingBottom: 12,
     maxWidth: "100%"
   },
   btn: {
@@ -433,5 +455,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: "50%",
+    zIndex: 20,
+    elevation: 20,
+  },
+  scrollView: {
+    flex: 1,
+    zIndex: 1,
+  },
+  scrollContent: {
+    paddingTop: Platform.OS === "ios" ? 120 : 96,
+    paddingBottom: 96,
   }
 })

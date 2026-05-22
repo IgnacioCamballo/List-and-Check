@@ -12,11 +12,15 @@ const theme = {
     colors: {
     baseColor: {
       light: "#dedede",
-      dark: "#000000"
+      transparentLight: "rgba(222, 222, 222, 0)",
+      dark: "#000000",
+      transparentDark: "rgba(0, 0, 0, 0)"
     },
     secondBaseColor: {
       dark: "#1a1a1a",
-      light: "#e7e7e7"
+      transparentDark: "rgba(26, 26, 26, 0)",
+      light: "#e7e7e7",
+      transparentLight: "rgba(231, 231, 231, 0)"
     },
     sectionColor: {
       light: "#f5f5f5",

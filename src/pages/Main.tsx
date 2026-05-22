@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Animated, Dimensions, GestureResponderEvent, Platform, StatusBar, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { Animated, Dimensions, Platform, StatusBar, StyleSheet, ScrollView, TouchableOpacity, View } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import type { Layout, RootStackParamList } from '../types';
 import { Entypo } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient'
 
 import useTask from '../hooks/useTask';
 import theme from '../theme/theme';
@@ -28,6 +29,7 @@ export default function Main() {
 
   const bgColorStyleValue = useRef(new Animated.Value(isDarkMode ? 1 : 0)).current
   const bgColor = isDarkMode ? theme.colors.baseColor.dark : theme.colors.baseColor.light
+  const bgColorWithOpacity = isDarkMode ? theme.colors.baseColor.transparentDark : theme.colors.baseColor.transparentLight
   const listColor = isDarkMode ? theme.colors.secondBaseColor.dark : theme.colors.secondBaseColor.light
 
   const bgColorStyles = {
@@ -113,7 +115,33 @@ export default function Main() {
 
   return (
     <Animated.View style={[styles.container, bgColorStyles]}>
+      <ScrollView
+        showsVerticalScrollIndicator={false} 
+        contentContainerStyle={{ 
+          paddingTop: Platform.OS === "ios" ? 120 : 96, 
+          paddingBottom: 16 
+        }}
+        style={styles.scrollView}
+      >
+        <View style={styles.listsContainer}>
+          {lists.map(listInfo =>
+            <List
+              isShell={false}
+              key={listInfo.id}
+              list={listInfo}
+              onPress={AnimateTransitionIn}
+            />
+          )}
+        </View>
+      </ScrollView>
+
       <View style={styles.buttonContainer}>
+        <LinearGradient
+          colors={[bgColor, bgColorWithOpacity]}
+          start={{ x: 0, y: 0.7 }}
+          end={{ x: 0, y: 1 }}
+          style={StyleSheet.absoluteFillObject}
+        />
         <TouchableOpacity
           activeOpacity={0.9}
           onPress={() => setConfigModal(true)}
@@ -128,16 +156,6 @@ export default function Main() {
           <Entypo style={{ transform: [{ translateX: 1 }] }} name="add-to-list" size={24} color={theme.colors.white} />
         </TouchableOpacity>
       </View>
-      <View style={styles.listsContainer}>
-        {lists.map(listInfo =>
-          <List
-            isShell={false}
-            key={listInfo.id}
-            list={listInfo}
-            onPress={AnimateTransitionIn}
-          />
-        )}
-      </View>
 
       {newListModal && <NewListModal setModal={setNewListModal} />}
       {configModal && <ConfigModal setIsVisible={setConfigModal} />}
@@ -148,7 +166,6 @@ export default function Main() {
             styles.shell,
             {
               backgroundColor: animateTransitionStyle.backgroundColor,
-              zIndex: 10,
               width: animateTransitionStyle.width,
               height: animateTransitionStyle.height,
               top: animateTransitionStyle.top,
@@ -175,11 +192,17 @@ const styles = StyleSheet.create({
     flex: 1
   },
   buttonContainer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 20,
+    elevation: 20,
     flexDirection: "row",
     justifyContent: "space-between",
     paddingTop: Platform.OS === "ios" ? 60 : 40,
     paddingInline: 20,
-    marginBottom: 12
+    paddingBottom: 12
 
   },
   btnNewList: {
@@ -193,15 +216,20 @@ const styles = StyleSheet.create({
     marginBottom: 12
   },
   listsContainer: {
-    flex: 1,
     flexDirection: "row",
     flexWrap: "wrap",
     columnGap: 16,
     rowGap: 16,
     paddingInline: 20
   },
+  scrollView: {
+    flex: 1,
+    zIndex: 1
+  },
   shell: {
     position: "absolute",
-    flex: 1
+    flex: 1,
+    zIndex: 30,
+    elevation: 30,
   }
 });
