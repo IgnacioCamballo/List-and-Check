@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { KeyboardAvoidingView, Modal, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { Keyboard, KeyboardAvoidingView, Modal, Platform, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import useTask from '../../hooks/useTask'
 import theme from '../../theme/theme'
 import { translate } from '../../utils'
@@ -12,6 +12,7 @@ type AddTaskModalProps = {
 export default function AddTaskModal({ closeModal, listId } : AddTaskModalProps) {
   const { isDarkMode, lists, setLists, lenguage } = useTask()
   const [taskContent, setTaskContent] = useState('')
+  const [keyboardOffset, setKeyboardOffset] = useState(0)
   const inputRef = useRef<TextInput>(null)
 
   const currentList = lists.find(list => list.id === listId)
@@ -23,6 +24,16 @@ export default function AddTaskModal({ closeModal, listId } : AddTaskModalProps)
 
   useEffect(() => {
     inputRef.current?.focus()
+  }, [])
+
+  useEffect(() => {
+    const showListener = Keyboard.addListener('keyboardDidShow', (event) => {
+      setKeyboardOffset(event.endCoordinates.height)
+    })
+
+    return () => {
+      showListener.remove()
+    }
   }, [])
 
   const addTaskToList = () => {
@@ -53,7 +64,8 @@ export default function AddTaskModal({ closeModal, listId } : AddTaskModalProps)
       <Pressable style={styles.backdrop} onPress={closeModal} />
 
       <KeyboardAvoidingView
-        style={styles.keyboardContainer}
+        behavior={Platform.OS === 'ios' ? 'padding' : "height"}
+        style={[styles.keyboardContainer, { ...(Platform.OS === 'ios' ? { marginBottom: 24 +keyboardOffset } : { paddingBottom: 24}) }]}
       >
         <View style={[
           styles.modalContainer,
@@ -120,8 +132,7 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     justifyContent: 'flex-end',
     alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingBottom: 24,
+    paddingHorizontal: 20
   },
   modalContainer: {
     width: '100%',

@@ -139,13 +139,6 @@ export default function ListModal({ setModal, list }: ListModalProps) {
         ]}
       >
         <View style={styles.rowBetween}>
-          <LinearGradient
-            colors={[modalBackgroundColor, 'transparent']}
-            start={{ x: 0.5, y: 0 }}
-            end={{ x: 0.5, y: 1 }}
-            style={StyleSheet.absoluteFillObject}
-          />
-
           <TouchableOpacity
             activeOpacity={1}
             style={[
