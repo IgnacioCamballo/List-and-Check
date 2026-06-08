@@ -19,6 +19,8 @@ export default function TaskPage() {
   const route = useRoute<RouteProp<RootStackParamList, 'TaskPage'>>()
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
   const { lists, setLists, isDarkMode, lenguage, setRunAnimationAfterList } = useTask()
+  //referencia para la animacion de salida si el usuario vuelve con deslizar en la pantalla en lugar del boton
+  const allowNativeGoBackRef = useRef(false)
 
   //asi evito llamar useTask en utils y translate puede ser usado dentro de funciones
   function translateFn(text: string) {
@@ -207,12 +209,31 @@ export default function TaskPage() {
     )
   }
 
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('beforeRemove', (event) => {
+      if (allowNativeGoBackRef.current) {
+        allowNativeGoBackRef.current = false
+        return
+      }
+
+      event.preventDefault()
+
+      Animated.timing(StartingOpacityValue, {
+        toValue: 0,
+        duration: 150,
+        useNativeDriver: false
+      }).start(() => {
+        setRunAnimationAfterList(true)
+        allowNativeGoBackRef.current = true
+        navigation.dispatch(event.data.action)
+      })
+    })
+
+    return unsubscribe
+  }, [navigation, setRunAnimationAfterList, StartingOpacityValue])
+
   const handleGoBack = () => {
-    Animated.timing(StartingOpacityValue, {
-      toValue: 0,
-      duration: 150,
-      useNativeDriver: false
-    }).start(() => {navigation.goBack(), setRunAnimationAfterList(true)})
+    navigation.goBack()
   }
 
   return (

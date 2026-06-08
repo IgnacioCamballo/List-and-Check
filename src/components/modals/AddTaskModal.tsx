@@ -21,12 +21,9 @@ export default function AddTaskModal({ closeModal, listId } : AddTaskModalProps)
   function translateFn(text: string) {
     return translate({ text, lenguage })
   }
-
+  
   useEffect(() => {
     inputRef.current?.focus()
-  }, [])
-
-  useEffect(() => {
     const showListener = Keyboard.addListener('keyboardDidShow', (event) => {
       setKeyboardOffset(event.endCoordinates.height)
     })
