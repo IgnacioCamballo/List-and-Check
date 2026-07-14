@@ -29,15 +29,6 @@ export default function TaskPage() {
 
   const selectedList = lists.find((list) => list.id === route.params.listId)
 
-  //si no hay lista muestra mensaje de error
-  if (!selectedList) {
-    return (
-      <View style={[styles.container, { backgroundColor: theme.colors.baseColor.light, alignItems: "center", justifyContent: "center" }]}>
-        <Text style={{ color: theme.colors.textColor.light }}>{translateFn("listNotFound")}</Text>
-      </View>
-    )
-  }
-
   const [editModal, setEditModal] = useState(false)
   const [addModal, setAddModal] = useState(false)
   const [editingTask, setEditingTask] = useState<number | null>(null)
@@ -50,12 +41,12 @@ export default function TaskPage() {
   const buttonColor = isDarkMode ? theme.colors.listColor.dark : theme.colors.white
 
   //el icono se renderiza con el nombre guardado en list.icon, que es una propiedad de AntDesign, por lo que se castea a ese tipo para usarlo como nombre del icono
-  const iconName = selectedList?.icon as keyof typeof AntDesign.glyphMap
+  const iconName = (selectedList?.icon ?? "unordered-list") as keyof typeof AntDesign.glyphMap
 
   //valores de animaciones
   const opacityValue = useRef(new Animated.Value(1)).current
   const StartingOpacityValue = useRef(new Animated.Value(0)).current //opacidad para la aniacion al abrir la lista
-  const opacityValueTasksDone = useRef(new Animated.Value(selectedList.showTasksDone ? 1 : 0)).current
+  const opacityValueTasksDone = useRef(new Animated.Value(selectedList?.showTasksDone ? 1 : 0)).current
   const opacityMovingTask = useRef(new Animated.Value(1)).current
   //utilizo los siguientes 3 para animar el mover tareas de hechas a no hechas y viceversa
   //altura total medida de la lista de tareas sin hacer
@@ -70,6 +61,38 @@ export default function TaskPage() {
       useNativeDriver: false
     }).start()
   }, [])
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('beforeRemove', (event) => {
+      if (allowNativeGoBackRef.current) {
+        allowNativeGoBackRef.current = false
+        return
+      }
+
+      event.preventDefault()
+
+      Animated.timing(StartingOpacityValue, {
+        toValue: 0,
+        duration: 150,
+        useNativeDriver: false
+      }).start(() => {
+        setRunAnimationAfterList(true)
+        allowNativeGoBackRef.current = true
+        navigation.dispatch(event.data.action)
+      })
+    })
+
+    return unsubscribe
+  }, [navigation, setRunAnimationAfterList, StartingOpacityValue])
+
+  //si no hay lista muestra mensaje de error (se declara despues de TODOS los hooks para no alterar su orden entre renders)
+  if (!selectedList) {
+    return (
+      <View style={[styles.container, { backgroundColor: theme.colors.baseColor.light, alignItems: "center", justifyContent: "center" }]}>
+        <Text style={{ color: theme.colors.textColor.light }}>{translateFn("listNotFound")}</Text>
+      </View>
+    )
+  }
 
   const handleHideTasksDone = () => {
     const newListInfo = {
@@ -208,29 +231,6 @@ export default function TaskPage() {
       }
     )
   }
-
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('beforeRemove', (event) => {
-      if (allowNativeGoBackRef.current) {
-        allowNativeGoBackRef.current = false
-        return
-      }
-
-      event.preventDefault()
-
-      Animated.timing(StartingOpacityValue, {
-        toValue: 0,
-        duration: 150,
-        useNativeDriver: false
-      }).start(() => {
-        setRunAnimationAfterList(true)
-        allowNativeGoBackRef.current = true
-        navigation.dispatch(event.data.action)
-      })
-    })
-
-    return unsubscribe
-  }, [navigation, setRunAnimationAfterList, StartingOpacityValue])
 
   const handleGoBack = () => {
     navigation.goBack()

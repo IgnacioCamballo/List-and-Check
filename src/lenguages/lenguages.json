@@ -59,6 +59,18 @@
     {"lenguage": "es", "text": "¿Eliminar las tareas completadas?"},
     {"lenguage": "en", "text": "Delete completed tasks?"}
   ],
+  "delete": [
+    {"lenguage": "es", "text": "Eliminar"},
+    {"lenguage": "en", "text": "Delete"}
+  ],
+  "deleteList": [
+    {"lenguage": "es", "text": "Eliminar lista"},
+    {"lenguage": "en", "text": "Delete list"}
+  ],
+  "deleteListAlert": [
+    {"lenguage": "es", "text": "¿Eliminar la lista"},
+    {"lenguage": "en", "text": "Delete the list"}
+  ],
   "cancel": [
     {"lenguage": "es", "text": "Cancelar"},
     {"lenguage": "en", "text": "Cancel"}

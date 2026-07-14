@@ -2,14 +2,14 @@ import { Platform } from "react-native"
 
 const theme = {
   bannerHeight: Platform.OS === "ios" ? 70 : 80,
-  banner: 
+  banner:
     // production adds
     Platform.OS === "ios" ? "ca-app-pub-4926030013898312/2756357550" : "ca-app-pub-4926030013898312/8531428410"
-    
-    // test ads
-    //Platform.OS === "ios" ? "ca-app-pub-3940256099942544/2934735716" : "ca-app-pub-3940256099942544/2934735716"
-    ,
-    colors: {
+
+  // test ads
+  //Platform.OS === "ios" ? "ca-app-pub-3940256099942544/2934735716" : "ca-app-pub-3940256099942544/2934735716"
+  ,
+  colors: {
     baseColor: {
       light: "#dedede",
       transparentLight: "rgba(222, 222, 222, 0)",
@@ -58,6 +58,7 @@ const theme = {
     lightBlue: "#838ea5",
     red: "#d62323",
     lightRed: "#ab4d4d",
+    extraLightRed: "#e3c7c7",
   },
   fontSizes: {
     F24: 24,

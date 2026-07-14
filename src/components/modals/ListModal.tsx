@@ -1,11 +1,12 @@
 import React, { useRef, useState } from 'react'
-import { Animated, Modal, Platform, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from 'react-native'
+import { Alert, Animated, Modal, Platform, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from 'react-native'
 import { TextInput } from 'react-native-gesture-handler'
-import { LinearGradient } from 'expo-linear-gradient'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { useNavigation } from '@react-navigation/native'
 
 import useTask from '../../hooks/useTask'
 import theme from '../../theme/theme'
-import { Layout, ListType } from '../../types'
+import { Layout, ListType, RootStackParamList } from '../../types'
 
 import ColorPickerModal from './ColorPickerModal'
 import { translate } from '../../utils'
@@ -19,8 +20,10 @@ type ListModalProps = {
 type AntDesignName = React.ComponentProps<typeof AntDesign>
 
 export default function ListModal({ setModal, list }: ListModalProps) {
-  const { isDarkMode, lenguage, lists, setLists } = useTask()
+  const { isDarkMode, lenguage, lists, setLists, setRunAnimationAfterList } = useTask()
   const { width: windowWidth } = useWindowDimensions()
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
+  
 
   const textColor = isDarkMode ? theme.colors.textColor.dark : theme.colors.textColor.light
   const secondTextColor = isDarkMode ? theme.colors.secondTextColor.dark : theme.colors.secondTextColor.light
@@ -121,6 +124,31 @@ export default function ListModal({ setModal, list }: ListModalProps) {
     })
     setLists(newLists)
     setModal(false)
+  }
+
+  const handleDeleteList = () => {
+    Alert.alert(
+      `${translateFn("deleteList")} ${title}?`,
+      translateFn("deleteListAlert"),
+      [
+        {
+          text: translateFn("cancel"),
+          style: "cancel"
+        },
+        {
+          text: translateFn("delete"),
+          style: "destructive",
+          onPress: () => deleteList()
+        }
+      ]
+    )
+  }
+  
+  const deleteList = () => {
+    const newLists = lists.filter(listInfo => listInfo.id !== list!.id)
+    setRunAnimationAfterList(false)
+    navigation.replace('Main')
+    setLists(newLists)
   }
 
   return (
@@ -253,6 +281,16 @@ export default function ListModal({ setModal, list }: ListModalProps) {
             ))}
           </View>
         </View>
+
+        {list && (
+          <TouchableOpacity
+            activeOpacity={1}
+            style={styles.deleteButton}
+            onPress={() => handleDeleteList()}
+          >
+            <Text style={styles.botonDeleteText}>{translateFn("deleteList")}</Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       {pickerModal && <ColorPickerModal currentColor={color} setColor={setColor} setModal={setPickerModal} />}
@@ -381,6 +419,21 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: "50%"
+  },
+  deleteButton: {
+    marginTop: 32,
+    width: "100%",
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: theme.colors.extraLightRed,
+    color: theme.colors.red,
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  botonDeleteText: {
+    color: theme.colors.red,
+    fontSize: theme.fontSizes.F20,
+    fontWeight: 500
   }
 })
 

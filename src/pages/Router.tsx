@@ -31,7 +31,7 @@ function RouterContent({ routeName }: { routeName: RouteName }) {
           screenOptions={{ headerShown: false }}
         >
           <Stack.Screen name="Load" component={LoadScreen} />
-          <Stack.Screen name="Main" component={Main} />
+          <Stack.Screen name="Main" component={Main} options={{ animation: 'none' }}/>
           <Stack.Screen name="TaskPage" component={TaskPage} options={{ animation: 'none' }} />
         </Stack.Navigator>
       </View>

@@ -26,12 +26,13 @@ export default function Main() {
   const [selectedListId, setSelectedListId] = useState<number | null>(null)
   const animationParams = useRef({ x: 0, y: 0, width: 0, height: 0 }).current
   const changeToListAnimationValue = useRef(new Animated.Value(0)).current
+  const selectedList = selectedListId === null ? undefined : lists.find(list => list.id === selectedListId)
 
   const bgColorStyleValue = useRef(new Animated.Value(isDarkMode ? 1 : 0)).current
   const bgColor = isDarkMode ? theme.colors.baseColor.dark : theme.colors.baseColor.light
   const bgColorWithOpacity = isDarkMode ? theme.colors.baseColor.transparentDark : theme.colors.baseColor.transparentLight
   const listColor = isDarkMode ? theme.colors.secondBaseColor.dark : theme.colors.secondBaseColor.light
-
+  console.log(lists.length, lists)
   const bgColorStyles = {
     backgroundColor: bgColorStyleValue.interpolate({
       inputRange: [0, 1],
@@ -113,6 +114,15 @@ export default function Main() {
     }
   }, [runAnimationAfterList])
 
+  //si la lista seleccionada fue eliminada mientras la shell de transicion seguia montada, se limpia el estado para no intentar renderizarla
+  useEffect(() => {
+    if (showPageChangeAnimation && selectedListId !== null && !selectedList) {
+      setShowPageChangeAnimation(false)
+      setSelectedListId(null)
+      changeToListAnimationValue.setValue(0)
+    }
+  }, [changeToListAnimationValue, selectedList, selectedListId, showPageChangeAnimation])
+
   return (
     <Animated.View style={[styles.container, bgColorStyles]}>
       <ScrollView
@@ -160,7 +170,7 @@ export default function Main() {
       {newListModal && <NewListModal setModal={setNewListModal} />}
       {configModal && <ConfigModal setIsVisible={setConfigModal} />}
 
-      {showPageChangeAnimation &&
+      {showPageChangeAnimation && selectedList &&
         <Animated.View
           style={[
             styles.shell,
@@ -177,7 +187,7 @@ export default function Main() {
           <Animated.View style={{ flex: 1, borderWidth: 0, opacity: animateTransitionStyle.opacity }}>
             <List
               isShell={true}
-              list={lists.find(list => list.id === selectedListId)!}
+              list={selectedList}
               onPress={() => { }}
             />
           </Animated.View>
