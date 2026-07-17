@@ -19,6 +19,26 @@
     {"lenguage": "es", "text": "Editar Lista"},
     {"lenguage": "en", "text": "Edit List"}
   ],
+  "orderListsTitle": [
+    {"lenguage": "es", "text": "Ordena las listas"},
+    {"lenguage": "en", "text": "Order the lists"}
+  ],
+  "orderListsSubtitle": [
+    {"lenguage": "es", "text": "Selecciona la posición de cada lista"},
+    {"lenguage": "en", "text": "Choose the position of each list"}
+  ],
+  "back": [
+    {"lenguage": "es", "text": "Volver"},
+    {"lenguage": "en", "text": "Back"}
+  ],
+  "save": [
+    {"lenguage": "es", "text": "Guardar"},
+    {"lenguage": "en", "text": "Save"}
+  ],
+  "position": [
+    {"lenguage": "es", "text": "Posición"},
+    {"lenguage": "en", "text": "Position"}
+  ],
   "selectColor": [
     {"lenguage": "es", "text": "Seleccionar Color"},
     {"lenguage": "en", "text": "Select Color"}
@@ -46,6 +66,14 @@
   "listNotFound": [
     {"lenguage": "es", "text": "Lista no encontrada"},
     {"lenguage": "en", "text": "List not found"}
+  ],
+  "emptyLists1": [
+    {"lenguage": "es", "text": "Crea una lista presionando"},
+    {"lenguage": "en", "text": "Create a list by pressing"}
+  ],
+  "emptyLists2": [
+    {"lenguage": "es", "text": "el boton  "},
+    {"lenguage": "en", "text": "the button  "}
   ],
   "completed": [
     {"lenguage": "es", "text": "Completadas"},

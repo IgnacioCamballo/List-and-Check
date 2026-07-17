@@ -2,12 +2,16 @@
 
 # dependencies
 node_modules/
+android/
+ios/
+%ProgramData%/
 
 # Expo
 .expo/
 dist/
 web-build/
 expo-env.d.ts
+.env
 
 # Native
 .kotlin/

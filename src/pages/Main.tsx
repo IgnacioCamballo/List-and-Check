@@ -1,22 +1,29 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Animated, Dimensions, Platform, StatusBar, StyleSheet, ScrollView, TouchableOpacity, View } from 'react-native'
+import { Animated, Dimensions, Platform, StatusBar, StyleSheet, ScrollView, TouchableOpacity, View, Text } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import type { Layout, RootStackParamList } from '../types';
 import { Entypo } from '@expo/vector-icons';
+import MaterialDesignIcons  from '@expo/vector-icons/MaterialCommunityIcons';
 import { LinearGradient } from 'expo-linear-gradient'
 
 import useTask from '../hooks/useTask';
 import theme from '../theme/theme';
+import { translate } from '../utils';
 
 import List from '../components/List';
 import NewListModal from '../components/modals/ListModal';
 import ConfigModal from '../components/modals/ConfigModal';
 import ConfigGear from '../components/basic/svg/ConfigGear';
+import CurveArrowSVG from '../components/basic/svg/CurveArrowSVG';
 
 export default function Main() {
-  const { lists, isDarkMode, runAnimationAfterList, setRunAnimationAfterList } = useTask()
+  const { lists, isDarkMode, runAnimationAfterList, setRunAnimationAfterList, lenguage } = useTask()
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
+
+  function translateFn(text: string) {
+    return translate({ text, lenguage })
+  }
 
   const [newListModal, setNewListModal] = useState(false)
   const [configModal, setConfigModal] = useState(false)
@@ -126,23 +133,50 @@ export default function Main() {
   return (
     <Animated.View style={[styles.container, bgColorStyles]}>
       <ScrollView
-        showsVerticalScrollIndicator={false} 
-        contentContainerStyle={{ 
-          paddingTop: Platform.OS === "ios" ? 120 : 96, 
-          paddingBottom: 16 
-        }}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={[
+          lists.length === 0 ? styles.emptyListContent : styles.listsContent,
+          { paddingBottom: 16 }
+        ]}
         style={styles.scrollView}
       >
-        <View style={styles.listsContainer}>
-          {lists.map(listInfo =>
-            <List
-              isShell={false}
-              key={listInfo.id}
-              list={listInfo}
-              onPress={AnimateTransitionIn}
-            />
-          )}
-        </View>
+        {/* if there is no lists shows a message on how to start */}
+        {lists.length === 0 ?
+          <View style={styles.emptyListContainer}>
+            <Text
+              style={[
+                styles.emptyListText,
+                { color: isDarkMode ? theme.colors.textColor.dark : theme.colors.textColor.light }
+              ]}
+            >
+              {translateFn("emptyLists1")}
+            </Text>
+            <Text
+              style={[
+                styles.emptyListText,
+                { color: isDarkMode ? theme.colors.textColor.dark : theme.colors.textColor.light }
+              ]}
+            >
+              {translateFn("emptyLists2")}
+              <Entypo
+                name="add-to-list"
+                size={24}
+                color={isDarkMode ? theme.colors.textColor.dark : theme.colors.textColor.light}
+              />
+            </Text>
+          </View>
+          :
+          <View style={styles.listsContainer}>
+            {lists.map(listInfo =>
+              <List
+                isShell={false}
+                key={listInfo.id}
+                list={listInfo}
+                onPress={AnimateTransitionIn}
+              />
+            )}
+          </View>
+        }
       </ScrollView>
 
       <View style={styles.buttonContainer}>
@@ -158,13 +192,22 @@ export default function Main() {
         >
           <ConfigGear width={40} height={40} />
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.btnNewList}
-          activeOpacity={0.9}
-          onPress={() => setNewListModal(true)}
-        >
-          <Entypo style={{ transform: [{ translateX: 1 }] }} name="add-to-list" size={24} color={theme.colors.white} />
-        </TouchableOpacity>
+        <View style={styles.addAndOrderButtonsContainer}>
+          <TouchableOpacity
+            style={styles.btnNewList}
+            activeOpacity={0.9}
+            onPress={() => navigation.navigate('OrderLists')}
+            >
+            <MaterialDesignIcons style={{ transform: [{ translateX: 1 }] }} name="unfold-more-vertical" size={24} color={theme.colors.white} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.btnNewList}
+            activeOpacity={0.9}
+            onPress={() => setNewListModal(true)}
+            >
+            <Entypo style={{ transform: [{ translateX: 1 }] }} name="add-to-list" size={24} color={theme.colors.white} />
+          </TouchableOpacity>
+        </View>
       </View>
 
       {newListModal && <NewListModal setModal={setNewListModal} />}
@@ -201,6 +244,27 @@ const styles = StyleSheet.create({
   container: {
     flex: 1
   },
+  emptyListContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
+    marginBottom: 40
+  },
+  emptyListText: {
+    textAlign: "center",
+    fontSize: 20,
+    paddingHorizontal: 40,
+  },
+  emptyListContent: {
+    flexGrow: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingTop: Platform.OS === "ios" ? 120 : 96
+  },
+  listsContent: {
+    paddingTop: Platform.OS === "ios" ? 120 : 96
+  },
   buttonContainer: {
     position: "absolute",
     top: 0,
@@ -222,8 +286,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: theme.colors.lightBlue,
     borderRadius: "50%",
-    marginRight: 0,
-    marginBottom: 12
+    marginRight: 0
   },
   listsContainer: {
     flexDirection: "row",
@@ -241,5 +304,13 @@ const styles = StyleSheet.create({
     flex: 1,
     zIndex: 30,
     elevation: 30,
+  },
+  addAndOrderButtonsContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    height: 40,
+    backgroundColor: theme.colors.lightBlue2,
+    borderRadius: 20,
   }
 });

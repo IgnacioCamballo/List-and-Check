@@ -11,6 +11,7 @@ import useTask from '../hooks/useTask'
 import LoadScreen from './LoadScreen'
 import Main from './Main'
 import TaskPage from './TaskPage'
+import OrderLists from './OrderLists'
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
 
@@ -33,6 +34,7 @@ function RouterContent({ routeName }: { routeName: RouteName }) {
           <Stack.Screen name="Load" component={LoadScreen} />
           <Stack.Screen name="Main" component={Main} options={{ animation: 'none' }}/>
           <Stack.Screen name="TaskPage" component={TaskPage} options={{ animation: 'none' }} />
+          <Stack.Screen name="OrderLists" component={OrderLists} options={{ animation: 'none' }} />
         </Stack.Navigator>
       </View>
       
@@ -70,10 +72,10 @@ export default function Router() {
 
 const styles = StyleSheet.create({
   root: {
-    flex: 1
+    flex: 1,
   },
   container: {
-    flex: 1
+    flex: 1,
   },
   publicidad: {
     width: '100%',

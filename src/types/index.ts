@@ -32,6 +32,7 @@ export type RootStackParamList = {
   Load: undefined,
   Main: undefined,
   TaskPage: { listId: number },
+  OrderLists: undefined,
 }
 
 export type TaskContextProps = {   
