@@ -41,7 +41,7 @@ function RouterContent({ routeName }: { routeName: RouteName }) {
       {addsInitialized && 
         <View style={styles.publicidad}>
           <BannerAd 
-            size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+            size={BannerAdSize.LARGE_ANCHORED_ADAPTIVE_BANNER}
             unitId={theme.banner}
             requestOptions={{
               requestNonPersonalizedAdsOnly: true

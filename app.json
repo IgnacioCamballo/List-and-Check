@@ -11,7 +11,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.kanatzustudio.listandcheck"
+      "bundleIdentifier": "com.kanatzu.listandcheck"
     },
     "android": {
       "adaptiveIcon": {
@@ -19,7 +19,7 @@
         "backgroundColor": "#ffffff"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.kanatzustudio.listandcheck"
+      "package": "com.kanatzu.listandcheck"
     },
     "plugins": [
       [
