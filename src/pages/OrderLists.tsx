@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { AntDesign, Feather, Ionicons } from '@expo/vector-icons'
@@ -63,53 +63,47 @@ export default function OrderLists() {
         <Text style={[styles.title, { color: textColor }]}>{translateFn('orderListsTitle')}</Text>
       </View>
 
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-        style={styles.scrollView}
-      >
-        <View style={styles.dragArea}>
-          <DraggableFlatList
-            data={orderedLists}
-            keyExtractor={(item) => String(item.id)}
-            onDragEnd={({ data }) => setOrderedLists(data.map((list, index) => ({ ...list, orderNumber: index + 1 })))}
-            activationDistance={12}
-            scrollEnabled={false}
-            contentContainerStyle={styles.content}
-            ListEmptyComponent={(
-              <View style={[styles.emptyBox, { backgroundColor: cardColor }]}>
-                <Text style={[styles.emptyText, { color: textColor }]}>{translateFn('listNotFound')}</Text>
+      <View style={styles.dragArea}>
+        <DraggableFlatList
+          data={orderedLists}
+          keyExtractor={(item) => String(item.id)}
+          onDragEnd={({ data }) => setOrderedLists(data.map((list, index) => ({ ...list, orderNumber: index + 1 })))}
+          activationDistance={12}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.content}
+          ListEmptyComponent={(
+            <View style={[styles.emptyBox, { backgroundColor: cardColor }]}>
+              <Text style={[styles.emptyText, { color: textColor }]}>{translateFn('listNotFound')}</Text>
+            </View>
+          )}
+          renderItem={({ item, drag, isActive }: RenderItemParams<ListType>) => (
+            <View
+              style={[
+                styles.listRow,
+                {
+                  backgroundColor: isActive ? buttonColor : cardColor,
+                  opacity: isActive ? 0.95 : 1,
+                }
+              ]}
+            >
+              <View style={styles.rowLeft}>
+                <AntDesign name={item.icon as keyof typeof AntDesign.glyphMap} size={22} color={item.color} />
+                <Text style={[styles.listTitle, { color: textColor }]} numberOfLines={1}>
+                  {item.title}
+                </Text>
               </View>
-            )}
-            renderItem={({ item, drag, isActive }: RenderItemParams<ListType>) => (
-              <View
-                style={[
-                  styles.listRow,
-                  {
-                    backgroundColor: isActive ? buttonColor : cardColor,
-                    opacity: isActive ? 0.95 : 1,
-                  }
-                ]}
+              <TouchableOpacity
+                activeOpacity={0.85}
+                onLongPress={drag}
+                delayLongPress={80}
+                style={styles.dragHandle}
               >
-                <View style={styles.rowLeft}>
-                  <AntDesign name={item.icon as keyof typeof AntDesign.glyphMap} size={22} color={item.color} />
-                  <Text style={[styles.listTitle, { color: textColor }]} numberOfLines={1}>
-                    {item.title}
-                  </Text>
-                </View>
-                <TouchableOpacity
-                  activeOpacity={0.85}
-                  onLongPress={drag}
-                  delayLongPress={80}
-                  style={styles.dragHandle}
-                >
-                  <Ionicons name="reorder-two-outline" size={22} color={textColor} />
-                </TouchableOpacity>
-              </View>
-            )}
-          />
-        </View>
-      </ScrollView>
+                <Ionicons name="reorder-two-outline" size={22} color={textColor} />
+              </TouchableOpacity>
+            </View>
+          )}
+        />
+      </View>
     </View>
   )
 }
@@ -147,12 +141,6 @@ const styles = StyleSheet.create({
     fontSize: 26,
     fontWeight: '700',
     textAlign: 'center',
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    flexGrow: 1,
   },
   dragArea: {
     flex: 1,

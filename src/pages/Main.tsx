@@ -15,7 +15,6 @@ import List from '../components/List';
 import NewListModal from '../components/modals/ListModal';
 import ConfigModal from '../components/modals/ConfigModal';
 import ConfigGear from '../components/basic/svg/ConfigGear';
-import CurveArrowSVG from '../components/basic/svg/CurveArrowSVG';
 
 export default function Main() {
   const { lists, isDarkMode, runAnimationAfterList, setRunAnimationAfterList, lenguage } = useTask()
@@ -39,7 +38,6 @@ export default function Main() {
   const bgColor = isDarkMode ? theme.colors.baseColor.dark : theme.colors.baseColor.light
   const bgColorWithOpacity = isDarkMode ? theme.colors.baseColor.transparentDark : theme.colors.baseColor.transparentLight
   const listColor = isDarkMode ? theme.colors.secondBaseColor.dark : theme.colors.secondBaseColor.light
-  console.log(lists.length, lists)
   const bgColorStyles = {
     backgroundColor: bgColorStyleValue.interpolate({
       inputRange: [0, 1],
