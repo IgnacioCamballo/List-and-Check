@@ -11,7 +11,10 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.kanatzu.listandcheck"
+      "bundleIdentifier": "com.kanatzu.listandcheck",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -38,6 +41,11 @@
           }
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "49469492-5516-46d2-b01b-5b8cc6278a4b"
+      }
+    }
   }
 }
